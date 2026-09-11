@@ -1,0 +1,23 @@
+[
+  {
+    "name": "HQ Data Center (Bangkok)",
+    "location": "อาคาร A ชั้น 4 พระราม 9 ห้วยขวาง กทม. 10310",
+    "contactPerson": "สมชาย รักษาการ (DC Manager)",
+    "phone": "02-123-4567 ต่อ 401",
+    "notes": "ห้อง Server มีระบบ FM-200, Precision Air 2 ตัว, คีย์การ์ดเข้าออก 2 ชั้น"
+  },
+  {
+    "name": "Rayong Plant (Industrial Estate)",
+    "location": "นิคมอุตสาหกรรมมาบตาพุด ต.มาบตาพุด อ.เมืองระยอง จ.ระยอง 21150",
+    "contactPerson": "วิชัย ช่างโรงงาน",
+    "phone": "038-987-654",
+    "notes": "ตู้ Rack ชั้นลอยโรงผลิต 1 มีฝุ่นโลหะ ต้องใช้ตู้ IP55 ติดแอร์"
+  },
+  {
+    "name": "Chiang Mai Regional Hub",
+    "location": "ถ.ซุปเปอร์ไฮเวย์ เชียงใหม่-ลำปาง ต.ช้างเผือก อ.เมือง จ.เชียงใหม่ 50300",
+    "contactPerson": "ณัฐวุฒิ ดูแลสาขา",
+    "phone": "053-112-233",
+    "notes": "มีลิงก์ MPLS ความเร็ว 100 Mbps และ Backup 5G Router"
+  }
+]

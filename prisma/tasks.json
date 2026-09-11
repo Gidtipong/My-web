@@ -1,0 +1,255 @@
+[
+  {
+    "title": "[INCIDENT] BKK-FW-PRI ใบ License ใกล้หมดอายุใน 14 วัน",
+    "description": "FortiCare & UTM Subscription กำลังจะหมดอายุ ส่งผลให้ Web Filter / IPS ใช้งานไม่ได้ ต้องต่อ MA ด่วน",
+    "type": "INCIDENT",
+    "priority": "P1",
+    "status": "IN_PROGRESS",
+    "siteIndex": 0,
+    "deviceIndex": 2,
+    "ticketRef": "INC-20260908-01",
+    "daysOffset": 2
+  },
+  {
+    "title": "[INCIDENT] แก้ไข Link Flapping ระหว่าง Core Switch กับ Storage Array",
+    "description": "Interface TenGigabitEthernet 1/0/48 เกิด CRC Error ต่อเนื่อง มี Packet Drop 12%",
+    "type": "INCIDENT",
+    "priority": "P1",
+    "status": "TODO",
+    "siteIndex": 0,
+    "deviceIndex": 0,
+    "ticketRef": "INC-20260909-02",
+    "daysOffset": 1
+  },
+  {
+    "title": "[INCIDENT] ไฟกระชาก ตู้ Rack ระยอง UPS แจ้งเตือน Overload",
+    "description": "APC UPS ร้องเตือนโหลดเกิน 85% เนื่องจากมีการนำพัดลมระบายอากาศเสียบเพิ่ม",
+    "type": "INCIDENT",
+    "priority": "P1",
+    "status": "DONE",
+    "siteIndex": 1,
+    "ticketRef": "INC-20260905-09",
+    "daysOffset": -2,
+    "completedOffset": -2
+  },
+  {
+    "title": "[INCIDENT] ประสานงานช่าง True เข้าตรวจสอบสาย Fiber ขาดหน้าปากซอยระยอง",
+    "description": "ช่างทำถนนเกี่ยวสาย Fiber ขาด ทำให้วงจรสำรองระยอง Down",
+    "type": "INCIDENT",
+    "priority": "P1",
+    "status": "DONE",
+    "siteIndex": 1,
+    "ticketRef": "TRUE-FBR-9901",
+    "daysOffset": -3,
+    "completedOffset": -3
+  },
+  {
+    "title": "[CHANGE] อัปเกรดเฟิร์มแวร์ FortiOS 7.4.5 บน Cluster BKK-FW",
+    "description": "เพื่อแก้ไขช่องโหว่ CVE-2024 ตาม Security Advisory ต้องทำหลังเที่ยงคืน (Maintenance Window)",
+    "type": "CHANGE",
+    "priority": "P2",
+    "status": "TODO",
+    "siteIndex": 0,
+    "deviceIndex": 2,
+    "rollbackPlan": "หากทราฟฟิกไม่ผ่าน ให้ทำ Boot Alternate Partition และสลับ HA กลับเป็นเวอร์ชันเดิม 7.2.8",
+    "daysOffset": 3
+  },
+  {
+    "title": "[MAINTENANCE] ตรวจเช็กระบบสำรองไฟและ Clean ฝุ่นในตู้ Rack โรงงานระยอง",
+    "description": "มีฝุ่นสะสมบนหน้ากากพัดลมของ FortiSwitch ต้องนำเครื่องเป่าลมแห้งเข้าทำความสะอาด",
+    "type": "MAINTENANCE",
+    "priority": "P2",
+    "status": "BLOCKED",
+    "siteIndex": 1,
+    "deviceIndex": 7,
+    "ticketRef": "CHG-2026-088",
+    "daysOffset": 5
+  },
+  {
+    "title": "[CHANGE] ตั้งค่า BGP Route Reflector สำหรับ MPLS สำรอง",
+    "description": "ปรับค่า Local Preference ของวงจร BKK-WAN-RTR01 ให้สอดคล้องกับ SLA ใหม่",
+    "type": "CHANGE",
+    "priority": "P2",
+    "status": "IN_PROGRESS",
+    "siteIndex": 0,
+    "deviceIndex": 4,
+    "daysOffset": 4
+  },
+  {
+    "title": "[AUDIT] ตรวจสอบ Firewall Rule ภายนอกเข้า DMZ Zone ประจำไตรมาส 3",
+    "description": "ค้นหา Any-to-Any Rule หรือพอร์ตที่ไม่ได้ใช้งานแล้วเพื่อทำการปิด (Hardening)",
+    "type": "AUDIT",
+    "priority": "P2",
+    "status": "TODO",
+    "siteIndex": 0,
+    "deviceIndex": 2,
+    "daysOffset": 7
+  },
+  {
+    "title": "[AUDIT] เปลี่ยนรหัสผ่าน Enable Secret และ TACACS+ Key บนสวิตช์ทุกตัว",
+    "description": "ตามนโยบายความปลอดภัย Information Security ประจำรอบ 6 เดือน",
+    "type": "AUDIT",
+    "priority": "P2",
+    "status": "TODO",
+    "siteIndex": 0,
+    "daysOffset": 9
+  },
+  {
+    "title": "[AUDIT] ลบ Account วิศวกรเครือข่ายที่ลาออกออกจาก Radius & TACACS+",
+    "description": "ดำเนินการตาม Ticket จากฝ่ายบุคคล (HR Exit Checklist)",
+    "type": "AUDIT",
+    "priority": "P2",
+    "status": "DONE",
+    "siteIndex": 0,
+    "daysOffset": -8,
+    "completedOffset": -8
+  },
+  {
+    "title": "ขยายขนาด DHCP Scope สำหรับ Guest Wi-Fi ที่สำนักงานเชียงใหม่",
+    "description": "เดิม /24 เต็มช่วงบ่าย ให้ขยายเป็น /23 (10.30.10.0/23) และลด Lease Time เหลือ 4 ชม.",
+    "type": "TASK",
+    "priority": "P3",
+    "status": "DONE",
+    "siteIndex": 2,
+    "deviceIndex": 9,
+    "daysOffset": -1,
+    "completedOffset": -1
+  },
+  {
+    "title": "ติดตั้ง Access Point เพิ่มเติม โซนห้องประชุมใหญ่ เชียงใหม่",
+    "description": "เดินสาย LAN Cat6 เข้าตู้ RACK และ Mount UniFi U6-Enterprise ขึ้นฝ้าเพดาน",
+    "type": "TASK",
+    "priority": "P3",
+    "status": "IN_PROGRESS",
+    "siteIndex": 2,
+    "deviceIndex": 11,
+    "daysOffset": 6
+  },
+  {
+    "title": "คอนฟิก VLAN 250 (IoT Sensors) แยกทราฟฟิกกล้องและเซนเซอร์ความชื้น",
+    "description": "แยกวง IP 10.20.250.0/24 ไม่ให้เข้าถึง Server Database ภายในโรงงาน",
+    "type": "TASK",
+    "priority": "P3",
+    "status": "TODO",
+    "siteIndex": 1,
+    "deviceIndex": 7,
+    "daysOffset": 8
+  },
+  {
+    "title": "สำรองข้อมูล Configuration อัตโนมัติ (Automated Backup Script)",
+    "description": "ตั้งค่า Cronjob ดึง running-config ของ Cisco และ Fortinet เก็บเข้า Local NAS และ Git",
+    "type": "TASK",
+    "priority": "P3",
+    "status": "DONE",
+    "siteIndex": 0,
+    "daysOffset": -4,
+    "completedOffset": -4
+  },
+  {
+    "title": "ทดสอบ Failover คู่ HA FortiGate 100F ประจำเดือน",
+    "description": "สั่ง manual failover ทดสอบการตัดต่อสัญญาณ VoIP และ SAP ว่าหลุดหรือไม่",
+    "type": "MAINTENANCE",
+    "priority": "P3",
+    "status": "TODO",
+    "siteIndex": 0,
+    "deviceIndex": 2,
+    "daysOffset": 10
+  },
+  {
+    "title": "ติดฉลาก Patch Cord สายใยแก้ว (Label Fiber) ตู้ Rack A01-A03",
+    "description": "พิมพ์ Label เครื่อง Brady ให้ตรงตามตาราง Port Mapping ล่าสุด",
+    "type": "TASK",
+    "priority": "P3",
+    "status": "TODO",
+    "siteIndex": 0,
+    "daysOffset": 12
+  },
+  {
+    "title": "ทดสอบการรับส่งข้อมูลผ่าน VPN Wireguard เชียงใหม่ - กทม.",
+    "description": "วัด Throughput ด้วย iperf3 ได้ค่าเฉลี่ย 88 Mbps (ความเร็วสูงสุดของลิงก์)",
+    "type": "TASK",
+    "priority": "P3",
+    "status": "DONE",
+    "siteIndex": 2,
+    "deviceIndex": 9,
+    "daysOffset": -5,
+    "completedOffset": -5
+  },
+  {
+    "title": "ตรวจสอบการแจ้งเตือน SNMP Trap บน PRTG Network Monitor",
+    "description": "สร้าง Alert Group ใหม่ส่งเข้า LINE Notify และ Telegram กลุ่มวิศวกร",
+    "type": "TASK",
+    "priority": "P3",
+    "status": "IN_PROGRESS",
+    "siteIndex": 0,
+    "daysOffset": 1
+  },
+  {
+    "title": "ตั้งค่า Syslog Server Forwarding เข้า SIEM กลาง",
+    "description": "ส่ง Log พอร์ตสวิตช์และล็อกอินจาก BKK-COR-SW01 ไปยัง 10.10.99.50",
+    "type": "AUDIT",
+    "priority": "P3",
+    "status": "DONE",
+    "siteIndex": 0,
+    "deviceIndex": 0,
+    "daysOffset": -7,
+    "completedOffset": -7
+  },
+  {
+    "title": "เปลี่ยนปลั๊กราง PDU ตู้ Server Rack B02",
+    "description": "รอช่างไฟฟ้าเข้าตัดวงจรไฟฟ้าช่วงวันเสาร์เพื่อสลับโหลด",
+    "type": "CHANGE",
+    "priority": "P3",
+    "status": "TODO",
+    "siteIndex": 0,
+    "daysOffset": 11
+  },
+  {
+    "title": "เปลี่ยนสาย Patch Cord เก่าในห้องประชุม 3 ที่หัวล็อคหัก",
+    "description": "เปลี่ยนเป็นสาย Cat6 Slim สีเทา 3 เมตร",
+    "type": "TASK",
+    "priority": "P4",
+    "status": "DONE",
+    "siteIndex": 0,
+    "daysOffset": -6,
+    "completedOffset": -6
+  },
+  {
+    "title": "ตรวจเช็คอุณหภูมิเซนเซอร์ห้อง Data Center หลังแอร์ตัวที่ 1 ซ่อมบำรุง",
+    "description": "บันทึกกราฟ SNMP อุณหภูมิให้อยู่ระหว่าง 20-22 องศาเซลเซียส",
+    "type": "MAINTENANCE",
+    "priority": "P4",
+    "status": "DONE",
+    "siteIndex": 0,
+    "daysOffset": -1,
+    "completedOffset": -1
+  },
+  {
+    "title": "ยกเลิกวงจร Internet เก่า (TOT Backup) สาขาระยอง",
+    "description": "รอเอกสารเซ็นต์อนุมัติจากฝ่ายจัดซื้อเพื่อถอดเราเตอร์คืนผู้ให้บริการ",
+    "type": "TASK",
+    "priority": "P4",
+    "status": "CANCELLED",
+    "siteIndex": 1,
+    "daysOffset": -10
+  },
+  {
+    "title": "จัดทำแผนภาพ Network Topology Diagram (Microsoft Visio)",
+    "description": "อัปเดตสวิตช์รุ่นใหม่ของสาขาเชียงใหม่ลงในไฟล์ Visio กลางของแผนก",
+    "type": "TASK",
+    "priority": "P4",
+    "status": "TODO",
+    "siteIndex": 2,
+    "daysOffset": 15
+  },
+  {
+    "title": "เช็กสถานะพัดลมระบายความร้อน Cisco ISR 4331",
+    "description": "พัดลม Fan 2 มีเสียงดังผิดปกติ ตรวจสอบค่า show environment fan พบ RPM ปกติแต่มีฝุ่นหนา",
+    "type": "MAINTENANCE",
+    "priority": "P4",
+    "status": "BLOCKED",
+    "siteIndex": 0,
+    "deviceIndex": 4,
+    "daysOffset": 14
+  }
+]

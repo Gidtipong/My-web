@@ -1,0 +1,136 @@
+[
+  {
+    "siteIndex": 0,
+    "hostname": "BKK-COR-SW01",
+    "ipAddress": "10.10.0.1",
+    "vendor": "Cisco",
+    "model": "Catalyst 9300-48P",
+    "serialNumber": "FCW2438L01B",
+    "role": "Core",
+    "status": "ACTIVE",
+    "notes": "Core Switch Stack 1 - StackWise-480 160G"
+  },
+  {
+    "siteIndex": 0,
+    "hostname": "BKK-COR-SW02",
+    "ipAddress": "10.10.0.2",
+    "vendor": "Cisco",
+    "model": "Catalyst 9300-48P",
+    "serialNumber": "FCW2438L02C",
+    "role": "Core",
+    "status": "ACTIVE",
+    "notes": "Core Switch Stack 2"
+  },
+  {
+    "siteIndex": 0,
+    "hostname": "BKK-FW-PRI",
+    "ipAddress": "10.10.0.254",
+    "vendor": "Fortinet",
+    "model": "FortiGate 100F",
+    "serialNumber": "FGT100FT21004561",
+    "role": "Firewall",
+    "status": "ACTIVE",
+    "isExpiring": true,
+    "notes": "Primary Cluster HA A-P, WAN1: AIS Fibre 1Gbps, WAN2: True 1Gbps"
+  },
+  {
+    "siteIndex": 0,
+    "hostname": "BKK-FW-SEC",
+    "ipAddress": "10.10.0.253",
+    "vendor": "Fortinet",
+    "model": "FortiGate 100F",
+    "serialNumber": "FGT100FT21004562",
+    "role": "Firewall",
+    "status": "ACTIVE",
+    "isExpiring": true,
+    "notes": "Secondary Cluster HA A-P"
+  },
+  {
+    "siteIndex": 0,
+    "hostname": "BKK-WAN-RTR01",
+    "ipAddress": "10.10.0.250",
+    "vendor": "Cisco",
+    "model": "ISR 4331/K9",
+    "serialNumber": "FOC22143XYZ",
+    "role": "Router",
+    "status": "ACTIVE",
+    "notes": "BGP Edge Router ต่อวงจร MPLS ข้ามไปสาขาระยอง และเชียงใหม่"
+  },
+  {
+    "siteIndex": 0,
+    "hostname": "BKK-DC-UPS01",
+    "ipAddress": "10.10.0.240",
+    "vendor": "APC",
+    "model": "Smart-UPS RT 3000VA",
+    "serialNumber": "JS1934002911",
+    "role": "UPS",
+    "status": "ACTIVE",
+    "notes": "เปลี่ยนแบตเตอรี่รอบล่าสุด มกราคม 2025 NMC Card ติดตั้งแล้ว"
+  },
+  {
+    "siteIndex": 1,
+    "hostname": "RYG-FW-01",
+    "ipAddress": "10.20.0.254",
+    "vendor": "Fortinet",
+    "model": "FortiGate 60F",
+    "serialNumber": "FGT60FT19001244",
+    "role": "Firewall",
+    "status": "ACTIVE",
+    "notes": "IPsec VPN Hub-and-Spoke ต่อตรงเข้า BKK HQ"
+  },
+  {
+    "siteIndex": 1,
+    "hostname": "RYG-SW-DIS01",
+    "ipAddress": "10.20.0.10",
+    "vendor": "Fortinet",
+    "model": "FortiSwitch 248E-FPOE",
+    "serialNumber": "FS248E4417000889",
+    "role": "Distribution",
+    "status": "ACTIVE",
+    "notes": "Manage ผ่าน FortiLink จาก RYG-FW-01"
+  },
+  {
+    "siteIndex": 1,
+    "hostname": "RYG-AP-PLANT01",
+    "ipAddress": "10.20.10.11",
+    "vendor": "Ubiquiti",
+    "model": "UniFi AP U6-Pro",
+    "serialNumber": "70A741E099A1",
+    "role": "AP",
+    "status": "ACTIVE",
+    "notes": "ครอบคลุมไลน์ผลิต 1 และโซนคลังสินค้าชั้นล่าง"
+  },
+  {
+    "siteIndex": 2,
+    "hostname": "CNX-GW-UDM",
+    "ipAddress": "10.30.0.1",
+    "vendor": "Ubiquiti",
+    "model": "UniFi Dream Machine Pro",
+    "serialNumber": "245A4C221088",
+    "role": "Router",
+    "status": "ACTIVE",
+    "notes": "ทำ Network Application Controller ในตัว และต่อ Site-to-Site Wireguard"
+  },
+  {
+    "siteIndex": 2,
+    "hostname": "CNX-SW-ACC01",
+    "ipAddress": "10.30.0.2",
+    "vendor": "Ubiquiti",
+    "model": "UniFi Switch Pro 24 PoE",
+    "serialNumber": "245A4C668901",
+    "role": "Access",
+    "status": "ACTIVE",
+    "notes": "จ่ายไฟ PoE ให้ AP 4 ตัวและกล้อง CCTV 10 ตัว"
+  },
+  {
+    "siteIndex": 2,
+    "hostname": "CNX-AP-OFFICE01",
+    "ipAddress": "10.30.10.21",
+    "vendor": "Ubiquiti",
+    "model": "UniFi AP U6-Enterprise",
+    "serialNumber": "70A741F33412",
+    "role": "AP",
+    "status": "ACTIVE",
+    "notes": "Wi-Fi 6E ให้บริการพนักงานสาขาเชียงใหม่ 40 คน"
+  }
+]
