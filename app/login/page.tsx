@@ -24,12 +24,14 @@ export default function LoginPage() {
   const [confirmPassword, setConfirmPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [showResend, setShowResend] = useState(false);
   const [message, setMessage] = useState<{ type: "success" | "error"; text: string } | null>(null);
 
   // Switch between Sign In and Sign Up tabs
   const handleSwitchMode = (newMode: "signin" | "signup") => {
     setMode(newMode);
     setMessage(null);
+    setShowResend(false);
     setPassword("");
     setConfirmPassword("");
   };
@@ -41,6 +43,7 @@ export default function LoginPage() {
 
     setIsSubmitting(true);
     setMessage(null);
+    setShowResend(false);
 
     try {
       const supabase = createClient();
@@ -50,7 +53,21 @@ export default function LoginPage() {
       });
 
       if (error) {
-        setMessage({ type: "error", text: error.message });
+        const msg = error.message.toLowerCase();
+        if (msg.includes("email not confirmed")) {
+          setMessage({
+            type: "error",
+            text: "อีเมลนี้ยังไม่ได้กดยืนยันการสมัครในกล่องข้อความอีเมลของคุณ! กรุณาตรวจสอบกล่องจดหมาย (หรือกดปุ่มขอส่งลิงก์ยืนยันใหม่ด้านล่าง)",
+          });
+          setShowResend(true);
+        } else if (msg.includes("invalid login credentials")) {
+          setMessage({
+            type: "error",
+            text: "อีเมลหรือรหัสผ่านไม่ถูกต้อง โปรดตรวจสอบตัวสะกดหรือกดสมัครสมาชิกใหม่หากยังไม่เคยสร้างบัญชี",
+          });
+        } else {
+          setMessage({ type: "error", text: error.message });
+        }
       } else {
         setMessage({
           type: "success",
@@ -82,6 +99,7 @@ export default function LoginPage() {
 
     setIsSubmitting(true);
     setMessage(null);
+    setShowResend(false);
 
     try {
       const supabase = createClient();
@@ -94,7 +112,16 @@ export default function LoginPage() {
       });
 
       if (error) {
-        setMessage({ type: "error", text: error.message });
+        const msg = error.message.toLowerCase();
+        if (msg.includes("user already registered")) {
+          setMessage({
+            type: "error",
+            text: "อีเมลนี้เคยลงทะเบียนไว้แล้ว โปรดสลับไปที่แท็บ 'เข้าสู่ระบบ (Sign In)'",
+          });
+          setMode("signin");
+        } else {
+          setMessage({ type: "error", text: error.message });
+        }
       } else if (data?.session) {
         setMessage({
           type: "success",
@@ -104,12 +131,41 @@ export default function LoginPage() {
       } else {
         setMessage({
           type: "success",
-          text: `สร้างบัญชีสำเร็จสำหรับ ${email}! หาก Supabase เปิดระบบยืนยันอีเมล โปรดตรวจสอบกล่องข้อความในอีเมลของคุณเพื่อยืนยัน แล้วกลับมาเข้าสู่ระบบได้ทันที`,
+          text: `สมัครสมาชิกสำเร็จสำหรับ ${email}! หาก Supabase ของคุณตั้งค่าให้ยืนยันอีเมล โปรดเปิดอีเมลแล้วกดยืนยัน (หรือดูวิธีปิดการยืนยันอีเมลใน Supabase ด้านล่าง)`,
         });
+        setShowResend(true);
         setMode("signin");
       }
     } catch (err: any) {
       setMessage({ type: "error", text: err.message || "เกิดข้อผิดพลาดในการสมัครสมาชิก" });
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  // 3. Resend Confirmation Email
+  const handleResendConfirmation = async () => {
+    if (!email) return;
+    setIsSubmitting(true);
+    try {
+      const supabase = createClient();
+      const { error } = await supabase.auth.resend({
+        type: "signup",
+        email: email.trim().toLowerCase(),
+        options: {
+          emailRedirectTo: `${window.location.origin}/auth/callback`,
+        },
+      });
+      if (error) {
+        setMessage({ type: "error", text: error.message });
+      } else {
+        setMessage({
+          type: "success",
+          text: `ส่งอีเมลยืนยันไปยัง ${email} อีกครั้งแล้ว โปรดตรวจสอบกล่องข้อความ (Inbox หรือ Spam)`,
+        });
+      }
+    } catch (err: any) {
+      setMessage({ type: "error", text: err.message || "เกิดข้อผิดพลาดในการส่งอีเมลซ้ำ" });
     } finally {
       setIsSubmitting(false);
     }
@@ -169,18 +225,32 @@ export default function LoginPage() {
           {/* Feedback Message */}
           {message && (
             <div
-              className={`p-3.5 rounded-xl text-xs flex items-start gap-2.5 ${
+              className={`p-3.5 rounded-xl text-xs flex flex-col gap-2.5 ${
                 message.type === "success"
                   ? "bg-emerald-500/10 text-emerald-800 dark:text-emerald-300 border border-emerald-500/25"
                   : "bg-red-500/10 text-red-700 dark:text-red-400 border border-red-500/25"
               }`}
             >
-              {message.type === "success" ? (
-                <CheckCircle2 className="w-4 h-4 shrink-0 text-emerald-600 dark:text-emerald-400 mt-0.5" />
-              ) : (
-                <AlertCircle className="w-4 h-4 shrink-0 text-red-600 dark:text-red-400 mt-0.5" />
+              <div className="flex items-start gap-2.5">
+                {message.type === "success" ? (
+                  <CheckCircle2 className="w-4 h-4 shrink-0 text-emerald-600 dark:text-emerald-400 mt-0.5" />
+                ) : (
+                  <AlertCircle className="w-4 h-4 shrink-0 text-red-600 dark:text-red-400 mt-0.5" />
+                )}
+                <span className="font-medium leading-relaxed">{message.text}</span>
+              </div>
+              {showResend && (
+                <div className="pt-1 flex items-center justify-end">
+                  <button
+                    type="button"
+                    disabled={isSubmitting}
+                    onClick={handleResendConfirmation}
+                    className="px-3 py-1 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white font-semibold text-[11px] shadow-xs cursor-pointer transition"
+                  >
+                    ส่งอีเมลยืนยันใหม่อีกครั้ง
+                  </button>
+                </div>
               )}
-              <span className="font-medium leading-relaxed">{message.text}</span>
             </div>
           )}
 
