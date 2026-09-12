@@ -35,26 +35,26 @@ export function Topbar({ onOpenCommandPalette }: TopbarProps) {
   }, []);
 
   return (
-    <header className="sticky top-0 z-30 flex h-16 w-full items-center justify-between border-b border-zinc-800/80 bg-zinc-950/90 px-4 md:px-6 backdrop-blur-md">
+    <header className="sticky top-0 z-30 flex h-16 w-full items-center justify-between border-b border-slate-200/80 dark:border-zinc-800/80 bg-white/80 dark:bg-zinc-950/80 px-4 md:px-6 backdrop-blur-md transition-colors">
       {/* Left: Mobile Brand & Search Trigger */}
       <div className="flex items-center gap-3 md:gap-4">
-        <div className="flex md:hidden items-center gap-2 font-bold text-zinc-100">
-          <div className="h-7 w-7 rounded-md bg-emerald-500 flex items-center justify-center text-zinc-950">
-            <Terminal className="h-4 w-4 text-zinc-950 stroke-[2.5]" />
+        <div className="flex md:hidden items-center gap-2 font-bold text-slate-900 dark:text-zinc-100">
+          <div className="h-7 w-7 rounded-lg bg-emerald-500 flex items-center justify-center text-white shadow-xs">
+            <Terminal className="h-4 w-4 text-white stroke-[2.5]" />
           </div>
-          <span className="text-base tracking-tight">NetTask</span>
+          <span className="text-base tracking-tight font-semibold">NetTask</span>
         </div>
 
         {/* Global Command Palette search input / trigger */}
         <button
           type="button"
           onClick={onOpenCommandPalette}
-          className="flex items-center gap-2.5 rounded-lg border border-zinc-800 bg-zinc-900/90 px-3 py-1.5 text-xs text-zinc-400 hover:border-zinc-700 hover:text-zinc-200 transition-all shadow-inner"
+          className="flex items-center gap-2.5 rounded-xl border border-slate-200 dark:border-zinc-800 bg-slate-50/80 dark:bg-zinc-900/90 px-3.5 py-1.5 text-xs text-slate-500 dark:text-zinc-400 hover:border-slate-300 dark:hover:border-zinc-700 hover:text-slate-900 dark:hover:text-zinc-200 transition-all shadow-2xs group"
         >
-          <Search className="h-3.5 w-3.5 text-zinc-400" />
+          <Search className="h-3.5 w-3.5 text-slate-400 dark:text-zinc-400 group-hover:text-emerald-500 transition-colors" />
           <span className="hidden sm:inline">Search tasks, cases, devices...</span>
           <span className="inline sm:hidden">Search...</span>
-          <kbd className="hidden sm:inline-flex items-center gap-1 rounded bg-zinc-800 px-1.5 py-0.5 text-[10px] font-mono text-zinc-400 border border-zinc-700">
+          <kbd className="hidden sm:inline-flex items-center gap-0.5 rounded-md bg-white dark:bg-zinc-800 px-1.5 py-0.5 text-[10px] font-mono text-slate-500 dark:text-zinc-400 border border-slate-200 dark:border-zinc-700 shadow-2xs">
             <span>⌘</span>K
           </kbd>
         </button>
@@ -63,11 +63,11 @@ export function Topbar({ onOpenCommandPalette }: TopbarProps) {
       {/* Right: Quick Telemetry, Clock, Theme Toggle & Engineer Profile */}
       <div className="flex items-center gap-3">
         {/* Bangkok Live Time Telemetry */}
-        <div className="hidden lg:flex items-center gap-2 px-2.5 py-1 rounded-md bg-zinc-900 border border-zinc-800 font-mono text-xs text-zinc-300">
-          <Wifi className="h-3.5 w-3.5 text-emerald-400" />
-          <span className="text-zinc-400">BKK:</span>
-          <span className="font-semibold text-emerald-400">{currentTime || "--:--:--"}</span>
-          <span className="text-[10px] text-zinc-400">UTC+7</span>
+        <div className="hidden lg:flex items-center gap-2 px-2.5 py-1 rounded-lg bg-slate-50 dark:bg-zinc-900 border border-slate-200 dark:border-zinc-800 font-mono text-xs text-slate-700 dark:text-zinc-300 shadow-2xs">
+          <Wifi className="h-3.5 w-3.5 text-emerald-500 dark:text-emerald-400 animate-pulse" />
+          <span className="text-slate-400 dark:text-zinc-500">BKK:</span>
+          <span className="font-semibold text-emerald-600 dark:text-emerald-400">{currentTime || "--:--:--"}</span>
+          <span className="text-[10px] text-slate-400 dark:text-zinc-500">UTC+7</span>
         </div>
 
         {/* Theme Toggle */}
@@ -78,24 +78,27 @@ export function Topbar({ onOpenCommandPalette }: TopbarProps) {
             const next = (resolvedTheme || theme) === "dark" ? "light" : "dark";
             setTheme(next);
           }}
-          className="flex h-8 w-8 items-center justify-center rounded-lg border border-zinc-800 bg-zinc-900 text-zinc-400 hover:text-zinc-100 hover:border-zinc-700 transition-colors"
+          className="flex h-8 w-8 items-center justify-center rounded-xl border border-slate-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 text-slate-600 dark:text-zinc-400 hover:text-slate-900 dark:hover:text-zinc-100 hover:border-slate-300 dark:hover:border-zinc-700 transition-all shadow-2xs hover:scale-105 active:scale-95"
           title={(resolvedTheme || theme) === "dark" ? "Switch to Light Mode" : "Switch to Dark Mode"}
         >
           {mounted && (resolvedTheme || theme) === "light" ? (
-            <Moon className="h-4 w-4 text-zinc-700" />
+            <Moon className="h-4 w-4 text-slate-700" />
           ) : (
             <Sun className="h-4 w-4 text-amber-400" />
           )}
         </button>
 
         {/* User Badge */}
-        <div className="flex items-center gap-2 pl-2 border-l border-zinc-800">
-          <div className="h-8 w-8 rounded-full bg-gradient-to-tr from-emerald-600 to-teal-800 flex items-center justify-center font-mono text-xs font-bold text-white border border-emerald-500/40 shadow-sm">
+        <div className="flex items-center gap-2.5 pl-2.5 border-l border-slate-200 dark:border-zinc-800">
+          <div className="h-8 w-8 rounded-full bg-gradient-to-tr from-emerald-600 to-teal-800 flex items-center justify-center font-mono text-xs font-bold text-white border border-emerald-500/40 shadow-xs ring-2 ring-emerald-500/10">
             NE
           </div>
           <div className="hidden xl:flex flex-col text-left">
-            <span className="text-xs font-medium text-zinc-200">Network Admin</span>
-            <span className="text-[10px] text-emerald-400 font-mono">On Duty</span>
+            <span className="text-xs font-semibold text-slate-900 dark:text-zinc-200">Network Admin</span>
+            <span className="text-[10px] text-emerald-600 dark:text-emerald-400 font-mono font-medium flex items-center gap-1">
+              <span className="h-1.5 w-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
+              On Duty
+            </span>
           </div>
         </div>
       </div>
