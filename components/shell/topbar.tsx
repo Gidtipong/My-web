@@ -14,6 +14,7 @@ export function Topbar({ onOpenCommandPalette }: TopbarProps) {
   const { theme, setTheme, resolvedTheme } = useTheme();
   const [mounted, setMounted] = React.useState(false);
   const [currentTime, setCurrentTime] = React.useState("");
+  const [userEmail, setUserEmail] = React.useState<string | null>(null);
 
   React.useEffect(() => {
     setMounted(true);
@@ -31,8 +32,26 @@ export function Topbar({ onOpenCommandPalette }: TopbarProps) {
 
     updateTime();
     const interval = setInterval(updateTime, 1000);
+
+    const fetchUser = async () => {
+      try {
+        const { createClient } = await import("@/lib/supabase");
+        const supabase = createClient();
+        const { data } = await supabase.auth.getUser();
+        if (data?.user?.email) {
+          setUserEmail(data.user.email);
+        }
+      } catch {
+        // silent
+      }
+    };
+    fetchUser();
+
     return () => clearInterval(interval);
   }, []);
+
+  const userInitials = userEmail ? userEmail.slice(0, 2).toUpperCase() : "NE";
+  const userDisplayName = userEmail ? userEmail.split("@")[0] : "Network Admin";
 
   return (
     <header className="sticky top-0 z-30 flex h-16 w-full items-center justify-between border-b border-slate-200/80 dark:border-zinc-800/80 bg-white/80 dark:bg-zinc-950/80 px-4 md:px-6 backdrop-blur-md transition-colors">
@@ -91,10 +110,12 @@ export function Topbar({ onOpenCommandPalette }: TopbarProps) {
         {/* User Badge & Logout */}
         <div className="flex items-center gap-2.5 pl-2.5 border-l border-slate-200 dark:border-zinc-800">
           <div className="h-8 w-8 rounded-full bg-gradient-to-tr from-emerald-600 to-teal-800 flex items-center justify-center font-mono text-xs font-bold text-white border border-emerald-500/40 shadow-xs ring-2 ring-emerald-500/10">
-            NE
+            {userInitials}
           </div>
           <div className="hidden xl:flex flex-col text-left">
-            <span className="text-xs font-semibold text-slate-900 dark:text-zinc-200">Network Admin</span>
+            <span className="text-xs font-semibold text-slate-900 dark:text-zinc-200 truncate max-w-[140px]" title={userEmail || "Network Admin"}>
+              {userDisplayName}
+            </span>
             <span className="text-[10px] text-emerald-600 dark:text-emerald-400 font-mono font-medium flex items-center gap-1">
               <span className="h-1.5 w-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
               On Duty

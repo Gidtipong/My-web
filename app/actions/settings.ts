@@ -2,6 +2,7 @@
 
 import { db } from "@/lib/db";
 import { notifier } from "@/lib/notify";
+import { createServerSupabaseClient } from "@/lib/supabase-server";
 
 export async function getSystemStats() {
   const [siteCount, deviceCount, taskCount, caseCount, userCount] = await Promise.all([
@@ -12,10 +13,35 @@ export async function getSystemStats() {
     db.user.count({ where: { deletedAt: null } }),
   ]);
 
-  const activeUser = await db.user.findFirst({
-    where: { deletedAt: null },
-    orderBy: { createdAt: "asc" },
-  });
+  let activeUser: any = null;
+
+  try {
+    const supabase = await createServerSupabaseClient();
+    const {
+      data: { user: authUser },
+    } = await supabase.auth.getUser();
+
+    if (authUser?.email) {
+      const dbUser = await db.user.findUnique({
+        where: { email: authUser.email },
+      });
+
+      activeUser = {
+        name: dbUser?.name || authUser.user_metadata?.name || authUser.email.split("@")[0].toUpperCase(),
+        email: authUser.email,
+        role: dbUser?.role || "ADMIN",
+      };
+    }
+  } catch (err) {
+    console.error("Failed to get auth user in getSystemStats:", err);
+  }
+
+  if (!activeUser) {
+    activeUser = await db.user.findFirst({
+      where: { deletedAt: null },
+      orderBy: { createdAt: "asc" },
+    });
+  }
 
   return {
     siteCount,
