@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter, usePathname } from "next/navigation";
 import { Sidebar } from "@/components/shell/sidebar";
 import { Topbar } from "@/components/shell/topbar";
 import { BottomNav } from "@/components/shell/bottom-nav";
@@ -15,8 +15,16 @@ interface AppShellProps {
 
 export function AppShell({ children }: AppShellProps) {
   const router = useRouter();
+  const pathname = usePathname();
   const [commandPaletteOpen, setCommandPaletteOpen] = useState(false);
   const [quickTaskOpen, setQuickTaskOpen] = useState(false);
+
+  const isAuthPage = pathname === "/login" || pathname?.startsWith("/auth");
+
+  // If on login/auth page, render clean full-screen view without dashboard chrome
+  if (isAuthPage) {
+    return <main className="min-h-screen bg-background text-foreground">{children}</main>;
+  }
 
   // Global Keyboard Shortcuts Handler
   // Ctrl/Cmd + K : Open command palette
