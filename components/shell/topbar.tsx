@@ -1,7 +1,7 @@
 "use client";
 
 import React from "react";
-import { Search, Moon, Sun, Bell, Terminal, Wifi } from "lucide-react";
+import { Search, Moon, Sun, Bell, Terminal, Wifi, LogOut } from "lucide-react";
 import { useTheme } from "next-themes";
 import { cn } from "@/lib/utils";
 
@@ -88,7 +88,7 @@ export function Topbar({ onOpenCommandPalette }: TopbarProps) {
           )}
         </button>
 
-        {/* User Badge */}
+        {/* User Badge & Logout */}
         <div className="flex items-center gap-2.5 pl-2.5 border-l border-slate-200 dark:border-zinc-800">
           <div className="h-8 w-8 rounded-full bg-gradient-to-tr from-emerald-600 to-teal-800 flex items-center justify-center font-mono text-xs font-bold text-white border border-emerald-500/40 shadow-xs ring-2 ring-emerald-500/10">
             NE
@@ -100,6 +100,20 @@ export function Topbar({ onOpenCommandPalette }: TopbarProps) {
               On Duty
             </span>
           </div>
+
+          <button
+            type="button"
+            onClick={async () => {
+              const { createClient } = await import("@/lib/supabase");
+              const supabase = createClient();
+              await supabase.auth.signOut();
+              window.location.href = "/login";
+            }}
+            title="ออกจากระบบ (Sign Out)"
+            className="flex h-8 w-8 items-center justify-center rounded-xl border border-slate-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 text-slate-500 hover:text-red-600 dark:text-zinc-400 dark:hover:text-red-400 hover:border-red-200 dark:hover:border-red-900/50 transition-all shadow-2xs cursor-pointer ml-1"
+          >
+            <LogOut className="h-3.5 w-3.5" />
+          </button>
         </div>
       </div>
     </header>

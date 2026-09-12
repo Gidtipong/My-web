@@ -5,34 +5,89 @@ import { createClient } from "@/lib/supabase";
 import {
   Terminal,
   Mail,
+  Lock,
+  Eye,
+  EyeOff,
   ArrowRight,
   CheckCircle2,
   AlertCircle,
   Loader2,
-  KeyRound,
-  RotateCcw,
   ShieldCheck,
+  UserPlus,
+  LogIn,
 } from "lucide-react";
 
 export default function LoginPage() {
+  const [mode, setMode] = useState<"signin" | "signup">("signin");
   const [email, setEmail] = useState("");
-  const [otpCode, setOtpCode] = useState("");
-  const [step, setStep] = useState<"enter_email" | "verify_otp">("enter_email");
+  const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [message, setMessage] = useState<{ type: "success" | "error"; text: string } | null>(null);
 
-  // Step 1: Send Magic Link & 6-digit OTP code to email
-  const handleSendEmail = async (e: React.FormEvent) => {
+  // Switch between Sign In and Sign Up tabs
+  const handleSwitchMode = (newMode: "signin" | "signup") => {
+    setMode(newMode);
+    setMessage(null);
+    setPassword("");
+    setConfirmPassword("");
+  };
+
+  // 1. Sign In with Email & Password
+  const handleSignIn = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!email) return;
+    if (!email || !password) return;
 
     setIsSubmitting(true);
     setMessage(null);
 
     try {
       const supabase = createClient();
-      const { error } = await supabase.auth.signInWithOtp({
+      const { data, error } = await supabase.auth.signInWithPassword({
         email: email.trim().toLowerCase(),
+        password,
+      });
+
+      if (error) {
+        setMessage({ type: "error", text: error.message });
+      } else {
+        setMessage({
+          type: "success",
+          text: "เข้าสู่ระบบสำเร็จ! กำลังนำท่านเข้าสู่หน้าคอนโซล...",
+        });
+        window.location.href = "/";
+      }
+    } catch (err: any) {
+      setMessage({ type: "error", text: err.message || "เกิดข้อผิดพลาดในการเข้าสู่ระบบ" });
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  // 2. Sign Up with Email & Set Password
+  const handleSignUp = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!email || !password) return;
+
+    if (password.length < 6) {
+      setMessage({ type: "error", text: "รหัสผ่านต้องมีความยาวอย่างน้อย 6 ตัวอักษร" });
+      return;
+    }
+
+    if (password !== confirmPassword) {
+      setMessage({ type: "error", text: "รหัสผ่านและยืนยันรหัสผ่านไม่ตรงกัน" });
+      return;
+    }
+
+    setIsSubmitting(true);
+    setMessage(null);
+
+    try {
+      const supabase = createClient();
+      const { data, error } = await supabase.auth.signUp({
+        email: email.trim().toLowerCase(),
+        password,
         options: {
           emailRedirectTo: `${window.location.origin}/auth/callback`,
         },
@@ -40,47 +95,21 @@ export default function LoginPage() {
 
       if (error) {
         setMessage({ type: "error", text: error.message });
-      } else {
-        setStep("verify_otp");
+      } else if (data?.session) {
         setMessage({
           type: "success",
-          text: `We sent a login link and a 6-digit verification code to ${email}. Check your inbox!`,
-        });
-      }
-    } catch (err: any) {
-      setMessage({ type: "error", text: err.message || "Failed to send login email." });
-    } finally {
-      setIsSubmitting(false);
-    }
-  };
-
-  // Step 2: Verify 6-digit OTP code from email
-  const handleVerifyOtp = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!otpCode || !email) return;
-
-    setIsSubmitting(true);
-    setMessage(null);
-
-    try {
-      const supabase = createClient();
-      const { error } = await supabase.auth.verifyOtp({
-        email: email.trim().toLowerCase(),
-        token: otpCode.trim(),
-        type: "email",
-      });
-
-      if (error) {
-        setMessage({ type: "error", text: error.message || "Invalid or expired code. Please try again." });
-      } else {
-        setMessage({
-          type: "success",
-          text: "Verification successful! Accessing your operations console...",
+          text: "สมัครสมาชิกและเข้าสู่ระบบสำเร็จ! กำลังเข้าสู่หน้าคอนโซล...",
         });
         window.location.href = "/";
+      } else {
+        setMessage({
+          type: "success",
+          text: `สร้างบัญชีสำเร็จสำหรับ ${email}! หาก Supabase เปิดระบบยืนยันอีเมล โปรดตรวจสอบกล่องข้อความในอีเมลของคุณเพื่อยืนยัน แล้วกลับมาเข้าสู่ระบบได้ทันที`,
+        });
+        setMode("signin");
       }
     } catch (err: any) {
-      setMessage({ type: "error", text: err.message || "Failed to verify code." });
+      setMessage({ type: "error", text: err.message || "เกิดข้อผิดพลาดในการสมัครสมาชิก" });
     } finally {
       setIsSubmitting(false);
     }
@@ -101,12 +130,43 @@ export default function LoginPage() {
             NetTask Access
           </h1>
           <p className="text-xs text-slate-500 dark:text-zinc-400 max-w-xs mx-auto">
-            Email Authentication Required. Enter your email to securely log in to the operations console.
+            {mode === "signin"
+              ? "ระบบจัดการงานและฐานข้อมูลเน็ตเวิร์ก เข้าสู่ระบบด้วยอีเมลและรหัสผ่าน"
+              : "สมัครบัญชีใหม่ด้วยอีเมลและตั้งรหัสผ่านสำหรับเข้าใช้งาน"}
           </p>
         </div>
 
-        {/* Login Box */}
-        <div className="rounded-2xl border border-slate-200/90 dark:border-zinc-800/80 bg-white dark:bg-zinc-900/90 p-7 shadow-xl shadow-slate-200/50 dark:shadow-2xl dark:shadow-black/50 backdrop-blur-md space-y-5 transition-all">
+        {/* Auth Card */}
+        <div className="rounded-2xl border border-slate-200/90 dark:border-zinc-800/80 bg-white dark:bg-zinc-900/90 p-6 sm:p-8 shadow-xl shadow-slate-200/50 dark:shadow-2xl dark:shadow-black/50 backdrop-blur-md space-y-5 transition-all">
+          {/* Segmented Mode Switcher */}
+          <div className="grid grid-cols-2 p-1 rounded-xl bg-slate-100 dark:bg-zinc-800 text-xs font-semibold">
+            <button
+              type="button"
+              onClick={() => handleSwitchMode("signin")}
+              className={`flex items-center justify-center gap-1.5 py-2 rounded-lg transition-all ${
+                mode === "signin"
+                  ? "bg-white dark:bg-zinc-900 text-slate-900 dark:text-white shadow-xs"
+                  : "text-slate-500 dark:text-zinc-400 hover:text-slate-800 dark:hover:text-zinc-200"
+              }`}
+            >
+              <LogIn className="w-3.5 h-3.5" />
+              <span>เข้าสู่ระบบ (Sign In)</span>
+            </button>
+            <button
+              type="button"
+              onClick={() => handleSwitchMode("signup")}
+              className={`flex items-center justify-center gap-1.5 py-2 rounded-lg transition-all ${
+                mode === "signup"
+                  ? "bg-white dark:bg-zinc-900 text-slate-900 dark:text-white shadow-xs"
+                  : "text-slate-500 dark:text-zinc-400 hover:text-slate-800 dark:hover:text-zinc-200"
+              }`}
+            >
+              <UserPlus className="w-3.5 h-3.5" />
+              <span>สมัครสมาชิก (Sign Up)</span>
+            </button>
+          </div>
+
+          {/* Feedback Message */}
           {message && (
             <div
               className={`p-3.5 rounded-xl text-xs flex items-start gap-2.5 ${
@@ -124,112 +184,132 @@ export default function LoginPage() {
             </div>
           )}
 
-          {step === "enter_email" ? (
-            /* Step 1: Input Work Email */
-            <form onSubmit={handleSendEmail} className="space-y-4 text-xs">
-              <div>
-                <label className="text-slate-700 dark:text-zinc-300 font-semibold block mb-1.5">
-                  Work Email Address
+          {/* Form */}
+          <form onSubmit={mode === "signin" ? handleSignIn : handleSignUp} className="space-y-4 text-xs">
+            {/* Email Field */}
+            <div>
+              <label className="text-slate-700 dark:text-zinc-300 font-semibold block mb-1.5">
+                อีเมลของคุณ (Work Email)
+              </label>
+              <div className="relative">
+                <Mail className="w-4 h-4 text-slate-400 dark:text-zinc-500 absolute left-3.5 top-1/2 -translate-y-1/2" />
+                <input
+                  type="email"
+                  required
+                  autoFocus
+                  placeholder="engineer@company.com"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  className="w-full pl-10 pr-3.5 py-2.5 rounded-xl bg-slate-50 dark:bg-zinc-950 border border-slate-200 dark:border-zinc-800 text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-zinc-500 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 focus:outline-none transition shadow-2xs"
+                />
+              </div>
+            </div>
+
+            {/* Password Field */}
+            <div>
+              <div className="flex items-center justify-between mb-1.5">
+                <label className="text-slate-700 dark:text-zinc-300 font-semibold block">
+                  {mode === "signin" ? "รหัสผ่าน (Password)" : "ตั้งรหัสผ่าน (Set Password)"}
                 </label>
-                <div className="relative">
-                  <Mail className="w-4 h-4 text-slate-400 dark:text-zinc-500 absolute left-3.5 top-1/2 -translate-y-1/2" />
-                  <input
-                    type="email"
-                    required
-                    autoFocus
-                    placeholder="engineer@company.com"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    className="w-full pl-10 pr-3.5 py-2.5 rounded-xl bg-slate-50 dark:bg-zinc-950 border border-slate-200 dark:border-zinc-800 text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-zinc-500 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 focus:outline-none transition shadow-2xs"
-                  />
-                </div>
-              </div>
-
-              <button
-                type="submit"
-                disabled={isSubmitting}
-                className="w-full flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 active:scale-[0.99] text-white font-semibold transition-all shadow-md shadow-emerald-500/20 hover:shadow-lg hover:shadow-emerald-500/30 disabled:opacity-50 cursor-pointer"
-              >
-                {isSubmitting ? (
-                  <Loader2 className="w-4 h-4 animate-spin" />
-                ) : (
-                  <>
-                    <span>Send Verification Code & Link</span>
-                    <ArrowRight className="w-3.5 h-3.5" />
-                  </>
+                {mode === "signup" && (
+                  <span className="text-[10px] text-slate-400 dark:text-zinc-500">อย่างน้อย 6 ตัวอักษร</span>
                 )}
-              </button>
-            </form>
-          ) : (
-            /* Step 2: Input 6-Digit OTP Code or Click Link */
-            <form onSubmit={handleVerifyOtp} className="space-y-4 text-xs">
-              <div>
-                <div className="flex items-center justify-between mb-1.5">
-                  <label className="text-slate-700 dark:text-zinc-300 font-semibold block">
-                    6-Digit Verification Code
-                  </label>
-                  <button
-                    type="button"
-                    onClick={() => {
-                      setStep("enter_email");
-                      setMessage(null);
-                    }}
-                    className="text-emerald-600 dark:text-emerald-400 hover:underline flex items-center gap-1 font-medium"
-                  >
-                    <RotateCcw className="w-3 h-3" />
-                    Change Email
-                  </button>
-                </div>
-                <div className="relative">
-                  <KeyRound className="w-4 h-4 text-slate-400 dark:text-zinc-500 absolute left-3.5 top-1/2 -translate-y-1/2" />
-                  <input
-                    type="text"
-                    required
-                    autoFocus
-                    maxLength={10}
-                    placeholder="Enter 6-digit code"
-                    value={otpCode}
-                    onChange={(e) => setOtpCode(e.target.value)}
-                    className="w-full pl-10 pr-3.5 py-2.5 rounded-xl bg-slate-50 dark:bg-zinc-950 border border-slate-200 dark:border-zinc-800 text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-zinc-500 text-center font-mono text-base tracking-widest font-bold focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 focus:outline-none transition shadow-2xs"
-                  />
-                </div>
-                <p className="text-[11px] text-slate-500 dark:text-zinc-400 mt-2">
-                  You can also click the sign-in button directly in the email you received.
-                </p>
               </div>
-
-              <button
-                type="submit"
-                disabled={isSubmitting || !otpCode.trim()}
-                className="w-full flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 active:scale-[0.99] text-white font-semibold transition-all shadow-md shadow-emerald-500/20 hover:shadow-lg hover:shadow-emerald-500/30 disabled:opacity-50 cursor-pointer"
-              >
-                {isSubmitting ? (
-                  <Loader2 className="w-4 h-4 animate-spin" />
-                ) : (
-                  <>
-                    <ShieldCheck className="w-4 h-4" />
-                    <span>Verify & Access Console</span>
-                  </>
-                )}
-              </button>
-
-              <div className="pt-1 text-center">
+              <div className="relative">
+                <Lock className="w-4 h-4 text-slate-400 dark:text-zinc-500 absolute left-3.5 top-1/2 -translate-y-1/2" />
+                <input
+                  type={showPassword ? "text" : "password"}
+                  required
+                  placeholder={mode === "signin" ? "••••••••" : "กำหนดรหัสผ่านอย่างน้อย 6 ตัว"}
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  className="w-full pl-10 pr-10 py-2.5 rounded-xl bg-slate-50 dark:bg-zinc-950 border border-slate-200 dark:border-zinc-800 text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-zinc-500 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 focus:outline-none transition shadow-2xs font-mono"
+                />
                 <button
                   type="button"
-                  disabled={isSubmitting}
-                  onClick={handleSendEmail}
-                  className="text-[11px] text-slate-500 dark:text-zinc-400 hover:text-emerald-600 dark:hover:text-emerald-400 transition underline"
+                  onClick={() => setShowPassword(!showPassword)}
+                  className="absolute right-3.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 dark:text-zinc-500 dark:hover:text-zinc-300 transition"
+                  tabIndex={-1}
                 >
-                  Didn't receive the email? Click to resend.
+                  {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
                 </button>
               </div>
-            </form>
-          )}
+            </div>
+
+            {/* Confirm Password Field (Only for Sign Up) */}
+            {mode === "signup" && (
+              <div>
+                <label className="text-slate-700 dark:text-zinc-300 font-semibold block mb-1.5">
+                  ยืนยันรหัสผ่าน (Confirm Password)
+                </label>
+                <div className="relative">
+                  <Lock className="w-4 h-4 text-slate-400 dark:text-zinc-500 absolute left-3.5 top-1/2 -translate-y-1/2" />
+                  <input
+                    type={showPassword ? "text" : "password"}
+                    required
+                    placeholder="พิมพ์รหัสผ่านเดิมซ้ำอีกครั้ง"
+                    value={confirmPassword}
+                    onChange={(e) => setConfirmPassword(e.target.value)}
+                    className="w-full pl-10 pr-3.5 py-2.5 rounded-xl bg-slate-50 dark:bg-zinc-950 border border-slate-200 dark:border-zinc-800 text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-zinc-500 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 focus:outline-none transition shadow-2xs font-mono"
+                  />
+                </div>
+              </div>
+            )}
+
+            {/* Submit Button */}
+            <button
+              type="submit"
+              disabled={isSubmitting}
+              className="w-full flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 active:scale-[0.99] text-white font-semibold transition-all shadow-md shadow-emerald-500/20 hover:shadow-lg hover:shadow-emerald-500/30 disabled:opacity-50 cursor-pointer pt-2.5"
+            >
+              {isSubmitting ? (
+                <Loader2 className="w-4 h-4 animate-spin" />
+              ) : mode === "signin" ? (
+                <>
+                  <span>เข้าสู่ระบบ (Sign In)</span>
+                  <ArrowRight className="w-3.5 h-3.5" />
+                </>
+              ) : (
+                <>
+                  <span>สมัครสมาชิกและตั้งรหัสผ่าน (Sign Up)</span>
+                  <ArrowRight className="w-3.5 h-3.5" />
+                </>
+              )}
+            </button>
+          </form>
+
+          {/* Toggle Helper Link */}
+          <div className="pt-2 text-center text-xs text-slate-500 dark:text-zinc-400">
+            {mode === "signin" ? (
+              <p>
+                ยังไม่มีบัญชีใช่หรือไม่?{" "}
+                <button
+                  type="button"
+                  onClick={() => handleSwitchMode("signup")}
+                  className="font-semibold text-emerald-600 dark:text-emerald-400 hover:underline"
+                >
+                  สมัครสมาชิกและตั้งรหัสผ่าน
+                </button>
+              </p>
+            ) : (
+              <p>
+                มีบัญชีอยู่แล้ว?{" "}
+                <button
+                  type="button"
+                  onClick={() => handleSwitchMode("signin")}
+                  className="font-semibold text-emerald-600 dark:text-emerald-400 hover:underline"
+                >
+                  เข้าสู่ระบบ
+                </button>
+              </p>
+            )}
+          </div>
         </div>
 
+        {/* Security Badge */}
         <div className="flex items-center justify-center gap-1.5 text-[11px] text-slate-500 dark:text-zinc-500">
           <ShieldCheck className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400" />
-          <span>Secured via Supabase Email Authentication</span>
+          <span>ระบบรักษาความปลอดภัยบัญชีด้วย Supabase Authentication</span>
         </div>
       </div>
     </div>
