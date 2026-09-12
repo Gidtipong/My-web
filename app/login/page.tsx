@@ -44,8 +44,7 @@ export default function LoginPage() {
 
   const handleDevBypass = () => {
     document.cookie = "nettask_dev_auth=authenticated; path=/; max-age=86400; SameSite=Lax";
-    router.push("/");
-    router.refresh();
+    window.location.href = "/";
   };
 
   return (

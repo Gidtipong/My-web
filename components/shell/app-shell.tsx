@@ -21,17 +21,14 @@ export function AppShell({ children }: AppShellProps) {
 
   const isAuthPage = pathname === "/login" || pathname?.startsWith("/auth");
 
-  // If on login/auth page, render clean full-screen view without dashboard chrome
-  if (isAuthPage) {
-    return <main className="min-h-screen bg-background text-foreground">{children}</main>;
-  }
-
   // Global Keyboard Shortcuts Handler
   // Ctrl/Cmd + K : Open command palette
   // N : Open Quick New Task
   // C : Go to New Case
   // / : Open search / command palette
   useEffect(() => {
+    if (isAuthPage) return;
+
     const handleKeyDown = (e: KeyboardEvent) => {
       // Ignore shortcut keys if user is typing inside an input/textarea/select
       const activeElement = document.activeElement;
@@ -63,7 +60,12 @@ export function AppShell({ children }: AppShellProps) {
 
     window.addEventListener("keydown", handleKeyDown);
     return () => window.removeEventListener("keydown", handleKeyDown);
-  }, [commandPaletteOpen, quickTaskOpen, router]);
+  }, [commandPaletteOpen, quickTaskOpen, router, isAuthPage]);
+
+  // If on login/auth page, render clean full-screen view without dashboard chrome
+  if (isAuthPage) {
+    return <main className="min-h-screen bg-background text-foreground">{children}</main>;
+  }
 
   return (
     <div className="min-h-screen bg-background text-foreground flex transition-colors">
