@@ -13,6 +13,11 @@ import {
   ShieldAlert,
   Flame,
   CheckCircle2,
+  Plus,
+  Compass,
+  FileCode2,
+  Sparkles,
+  ChevronRight,
 } from "lucide-react";
 import { TaskPriority, TaskStatus } from "@prisma/client";
 
@@ -91,58 +96,72 @@ export default async function HomePage() {
   const deviceCount = Number(c.device_count || 0);
   const siteCount = Number(c.site_count || 0);
 
-  return (
-    <div className="space-y-6 max-w-7xl mx-auto w-full p-4 md:p-8">
-      {/* Welcome Banner */}
-      <div className="rounded-2xl border border-slate-200/90 dark:border-zinc-800/80 bg-gradient-to-r from-emerald-50/70 via-white to-slate-50 dark:from-zinc-900 dark:via-zinc-900/80 dark:to-zinc-950 p-6 sm:p-7 shadow-xs relative overflow-hidden">
-        {/* Subtle Ambient Glow */}
-        <div className="absolute top-0 right-0 w-96 h-96 bg-emerald-500/5 rounded-full blur-3xl pointer-events-none" />
+  const isBrandNewWorkspace = activeTaskCount === 0 && caseCount === 0 && deviceCount === 0;
 
-        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 relative z-10">
-          <div className="space-y-2">
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-500/10 dark:bg-emerald-500/15 border border-emerald-500/25 text-emerald-700 dark:text-emerald-400 font-mono text-xs">
+  return (
+    <div className="space-y-7 max-w-7xl mx-auto w-full p-4 md:p-8">
+      {/* 1. Modern Minimalist Hero Banner */}
+      <div className="rounded-2xl border border-emerald-500/20 dark:border-emerald-500/20 bg-gradient-to-br from-emerald-500/[0.07] via-teal-500/[0.03] to-slate-100/50 dark:from-emerald-950/40 dark:via-zinc-900/80 dark:to-zinc-950 p-6 sm:p-8 shadow-xs relative overflow-hidden">
+        {/* Subtle Ambient Radial Glow */}
+        <div className="absolute -top-12 -right-12 w-80 h-80 bg-emerald-500/10 rounded-full blur-3xl pointer-events-none" />
+
+        <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-6 relative z-10">
+          <div className="space-y-2.5">
+            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-500/10 dark:bg-emerald-500/15 border border-emerald-500/30 text-emerald-700 dark:text-emerald-400 font-mono text-xs">
               <span className="relative flex h-2 w-2">
                 <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
                 <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
               </span>
-              NetTask NOC Dashboard Operational
+              NetTask Operations Console
             </div>
-            <h1 className="text-2xl sm:text-3xl font-extrabold tracking-tight text-slate-900 dark:text-white">
-              Network Operations & Knowledge Management
+            <h1 className="text-2xl sm:text-3xl lg:text-4xl font-extrabold tracking-tight text-slate-900 dark:text-white">
+              Network Operations & Knowledge Hub
             </h1>
-            <p className="text-sm text-slate-600 dark:text-zinc-400 max-w-2xl leading-relaxed">
-              Solo Network Engineer Command Center. Real-time task execution, hardware health monitoring, and instant incident lookup.
+            <p className="text-xs sm:text-sm text-slate-600 dark:text-zinc-400 max-w-2xl leading-relaxed">
+              Solo Network Engineer Command Center. Real-time task execution, hardware lifecycle tracking, and instant incident lookup.
             </p>
           </div>
-          <div className="flex items-center gap-2">
-            <div className="px-3.5 py-2 rounded-xl bg-white dark:bg-zinc-950 border border-slate-200 dark:border-zinc-800 text-xs font-mono text-slate-600 dark:text-zinc-300 shadow-2xs flex items-center gap-2">
-              <span>Quick Search</span>
-              <kbd className="px-1.5 py-0.5 rounded-md bg-slate-100 dark:bg-zinc-800 text-emerald-600 dark:text-emerald-400 border border-slate-200 dark:border-zinc-700 text-[10px]">Ctrl+K</kbd>
-            </div>
+
+          {/* Quick Action CTAs inside Hero */}
+          <div className="flex flex-wrap items-center gap-2.5 shrink-0">
+            <Link
+              href="/tasks"
+              className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 active:scale-95 text-white text-xs font-semibold shadow-sm shadow-emerald-500/25 transition-all"
+            >
+              <Plus className="w-4 h-4 stroke-[2.5]" />
+              <span>Create Task</span>
+            </Link>
+            <Link
+              href="/cases/new"
+              className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-white dark:bg-zinc-900 hover:bg-slate-50 dark:hover:bg-zinc-800 text-slate-700 dark:text-zinc-200 border border-slate-200 dark:border-zinc-800 text-xs font-semibold shadow-2xs hover:shadow-xs transition-all"
+            >
+              <BookOpenCheck className="w-4 h-4 text-blue-500" />
+              <span>Log Solution</span>
+            </Link>
           </div>
         </div>
       </div>
 
-      {/* Primary KPI Status Cards */}
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+      {/* 2. Bento Grid KPI Cards */}
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-5">
         {/* Active Tasks */}
         <Link
           href="/tasks"
-          className="p-5 rounded-2xl border border-slate-200/90 dark:border-zinc-800/80 bg-white dark:bg-zinc-900/60 hover:border-emerald-500/40 dark:hover:border-emerald-500/30 shadow-xs hover:shadow-md transition-all duration-200 group flex flex-col justify-between cursor-pointer"
+          className="p-5 sm:p-6 rounded-2xl border border-slate-200/90 dark:border-zinc-800/80 bg-white dark:bg-zinc-900/70 hover:border-emerald-500/40 dark:hover:border-emerald-500/30 shadow-xs hover:shadow-md hover:-translate-y-0.5 transition-all duration-200 group flex flex-col justify-between cursor-pointer"
         >
           <div className="flex items-center justify-between text-xs text-slate-500 dark:text-zinc-400 mb-3">
-            <span className="font-bold uppercase tracking-wider text-[11px]">Active Tasks</span>
-            <div className="p-1.5 rounded-lg bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 group-hover:scale-110 transition-transform">
-              <CheckSquare className="h-4 w-4" />
+            <span className="font-bold uppercase tracking-wider text-[11px] text-slate-600 dark:text-zinc-400">Active Tasks</span>
+            <div className="p-2 rounded-xl bg-emerald-50 dark:bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 group-hover:scale-110 transition-transform">
+              <CheckSquare className="h-4 w-4 stroke-[2.2]" />
             </div>
           </div>
           <div>
-            <div className="text-3xl font-extrabold text-slate-900 dark:text-white font-mono tracking-tight">{activeTaskCount}</div>
+            <div className="text-3xl sm:text-4xl font-extrabold text-slate-900 dark:text-white font-mono tracking-tight">{activeTaskCount}</div>
             <p className="text-xs text-slate-500 dark:text-zinc-500 mt-2 flex items-center gap-1.5">
               {overdueTaskCount > 0 ? (
                 <span className="text-red-600 dark:text-red-400 font-semibold">{overdueTaskCount} overdue</span>
               ) : (
-                <span className="text-emerald-600 dark:text-emerald-400 font-semibold">No overdue tasks</span>
+                <span className="text-emerald-600 dark:text-emerald-400 font-medium">All tasks on schedule</span>
               )}
             </p>
           </div>
@@ -151,20 +170,20 @@ export default async function HomePage() {
         {/* P1 Critical Incidents */}
         <Link
           href="/tasks?priority=P1"
-          className="p-5 rounded-2xl border border-slate-200/90 dark:border-zinc-800/80 bg-white dark:bg-zinc-900/60 hover:border-red-500/40 dark:hover:border-red-500/30 shadow-xs hover:shadow-md transition-all duration-200 group flex flex-col justify-between cursor-pointer"
+          className="p-5 sm:p-6 rounded-2xl border border-slate-200/90 dark:border-zinc-800/80 bg-white dark:bg-zinc-900/70 hover:border-rose-500/40 dark:hover:border-rose-500/30 shadow-xs hover:shadow-md hover:-translate-y-0.5 transition-all duration-200 group flex flex-col justify-between cursor-pointer"
         >
           <div className="flex items-center justify-between text-xs text-slate-500 dark:text-zinc-400 mb-3">
-            <span className="font-bold uppercase tracking-wider text-[11px]">Critical P1</span>
-            <div className={`p-1.5 rounded-lg ${p1TaskCount > 0 ? "bg-red-500/10 text-red-500 animate-pulse" : "bg-slate-100 dark:bg-zinc-800 text-slate-400"} group-hover:scale-110 transition-transform`}>
-              <Flame className="h-4 w-4" />
+            <span className="font-bold uppercase tracking-wider text-[11px] text-slate-600 dark:text-zinc-400">Critical P1</span>
+            <div className={`p-2 rounded-xl ${p1TaskCount > 0 ? "bg-rose-50 dark:bg-rose-500/15 text-rose-600 animate-pulse" : "bg-slate-100 dark:bg-zinc-800 text-slate-400"} group-hover:scale-110 transition-transform`}>
+              <Flame className="h-4 w-4 stroke-[2.2]" />
             </div>
           </div>
           <div>
-            <div className={`text-3xl font-extrabold font-mono tracking-tight ${p1TaskCount > 0 ? "text-red-600 dark:text-red-400" : "text-slate-900 dark:text-white"}`}>
+            <div className={`text-3xl sm:text-4xl font-extrabold font-mono tracking-tight ${p1TaskCount > 0 ? "text-rose-600 dark:text-rose-400" : "text-slate-900 dark:text-white"}`}>
               {p1TaskCount}
             </div>
             <p className="text-xs text-slate-500 dark:text-zinc-500 mt-2">
-              {p1TaskCount > 0 ? "Urgent intervention needed" : "Zero active P1 outages"}
+              {p1TaskCount > 0 ? "Urgent outage in progress" : "Zero active P1 outages"}
             </p>
           </div>
         </Link>
@@ -172,16 +191,16 @@ export default async function HomePage() {
         {/* Troubleshooting Cases */}
         <Link
           href="/cases"
-          className="p-5 rounded-2xl border border-slate-200/90 dark:border-zinc-800/80 bg-white dark:bg-zinc-900/60 hover:border-blue-500/40 dark:hover:border-blue-500/30 shadow-xs hover:shadow-md transition-all duration-200 group flex flex-col justify-between cursor-pointer"
+          className="p-5 sm:p-6 rounded-2xl border border-slate-200/90 dark:border-zinc-800/80 bg-white dark:bg-zinc-900/70 hover:border-blue-500/40 dark:hover:border-blue-500/30 shadow-xs hover:shadow-md hover:-translate-y-0.5 transition-all duration-200 group flex flex-col justify-between cursor-pointer"
         >
           <div className="flex items-center justify-between text-xs text-slate-500 dark:text-zinc-400 mb-3">
-            <span className="font-bold uppercase tracking-wider text-[11px]">Knowledge Base</span>
-            <div className="p-1.5 rounded-lg bg-blue-500/10 text-blue-600 dark:text-blue-400 group-hover:scale-110 transition-transform">
-              <BookOpenCheck className="h-4 w-4" />
+            <span className="font-bold uppercase tracking-wider text-[11px] text-slate-600 dark:text-zinc-400">Knowledge Base</span>
+            <div className="p-2 rounded-xl bg-blue-50 dark:bg-blue-500/10 text-blue-600 dark:text-blue-400 group-hover:scale-110 transition-transform">
+              <BookOpenCheck className="h-4 w-4 stroke-[2.2]" />
             </div>
           </div>
           <div>
-            <div className="text-3xl font-extrabold text-slate-900 dark:text-white font-mono tracking-tight">{caseCount}</div>
+            <div className="text-3xl sm:text-4xl font-extrabold text-slate-900 dark:text-white font-mono tracking-tight">{caseCount}</div>
             <p className="text-xs text-slate-500 dark:text-zinc-500 mt-2">Thai & English solutions</p>
           </div>
         </Link>
@@ -189,29 +208,84 @@ export default async function HomePage() {
         {/* Managed Devices */}
         <Link
           href="/devices"
-          className="p-5 rounded-2xl border border-slate-200/90 dark:border-zinc-800/80 bg-white dark:bg-zinc-900/60 hover:border-purple-500/40 dark:hover:border-purple-500/30 shadow-xs hover:shadow-md transition-all duration-200 group flex flex-col justify-between cursor-pointer"
+          className="p-5 sm:p-6 rounded-2xl border border-slate-200/90 dark:border-zinc-800/80 bg-white dark:bg-zinc-900/70 hover:border-violet-500/40 dark:hover:border-violet-500/30 shadow-xs hover:shadow-md hover:-translate-y-0.5 transition-all duration-200 group flex flex-col justify-between cursor-pointer"
         >
           <div className="flex items-center justify-between text-xs text-slate-500 dark:text-zinc-400 mb-3">
-            <span className="font-bold uppercase tracking-wider text-[11px]">Devices & Sites</span>
-            <div className="p-1.5 rounded-lg bg-purple-500/10 text-purple-600 dark:text-purple-400 group-hover:scale-110 transition-transform">
-              <Server className="h-4 w-4" />
+            <span className="font-bold uppercase tracking-wider text-[11px] text-slate-600 dark:text-zinc-400">Devices & Sites</span>
+            <div className="p-2 rounded-xl bg-violet-50 dark:bg-violet-500/10 text-violet-600 dark:text-violet-400 group-hover:scale-110 transition-transform">
+              <Server className="h-4 w-4 stroke-[2.2]" />
             </div>
           </div>
           <div>
-            <div className="text-3xl font-extrabold text-slate-900 dark:text-white font-mono tracking-tight">{deviceCount}</div>
+            <div className="text-3xl sm:text-4xl font-extrabold text-slate-900 dark:text-white font-mono tracking-tight">{deviceCount}</div>
             <p className="text-xs text-slate-500 dark:text-zinc-500 mt-2">Across {siteCount} physical sites</p>
           </div>
         </Link>
       </div>
 
-      {/* Main Grid: Urgent Tasks & Recent Cases */}
+      {/* 3. Quick-Start Onboarding Guide (Shown when workspace is newly set up or data is low) */}
+      {isBrandNewWorkspace && (
+        <div className="rounded-2xl border border-slate-200/90 dark:border-zinc-800 bg-white dark:bg-zinc-900/60 p-6 sm:p-7 shadow-xs">
+          <div className="flex items-center gap-2.5 mb-4">
+            <div className="p-2 rounded-xl bg-emerald-50 dark:bg-emerald-500/10 text-emerald-600 dark:text-emerald-400">
+              <Sparkles className="w-5 h-5" />
+            </div>
+            <div>
+              <h2 className="text-sm sm:text-base font-bold text-slate-900 dark:text-white">Quick Start Launchpad</h2>
+              <p className="text-xs text-slate-500 dark:text-zinc-400">Follow these 3 steps to populate your network engineering operations:</p>
+            </div>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 pt-2">
+            <Link
+              href="/tasks"
+              className="p-4 rounded-xl border border-slate-200/80 dark:border-zinc-800 bg-slate-50/70 dark:bg-zinc-950/60 hover:border-emerald-500/40 dark:hover:border-emerald-500/40 transition-all group"
+            >
+              <div className="flex items-center justify-between mb-2">
+                <span className="text-[10px] font-mono font-bold uppercase tracking-wider px-2 py-0.5 rounded-full bg-emerald-500/10 text-emerald-600 dark:text-emerald-400">Step 1</span>
+                <ChevronRight className="w-4 h-4 text-slate-400 group-hover:translate-x-1 transition-transform" />
+              </div>
+              <h3 className="text-xs font-bold text-slate-900 dark:text-white mb-1">Create First Task</h3>
+              <p className="text-[11px] text-slate-500 dark:text-zinc-400 leading-relaxed">Schedule routine maintenance, BGP peering, or router configuration changes.</p>
+            </Link>
+
+            <Link
+              href="/cases/new"
+              className="p-4 rounded-xl border border-slate-200/80 dark:border-zinc-800 bg-slate-50/70 dark:bg-zinc-950/60 hover:border-blue-500/40 dark:hover:border-blue-500/40 transition-all group"
+            >
+              <div className="flex items-center justify-between mb-2">
+                <span className="text-[10px] font-mono font-bold uppercase tracking-wider px-2 py-0.5 rounded-full bg-blue-500/10 text-blue-600 dark:text-blue-400">Step 2</span>
+                <ChevronRight className="w-4 h-4 text-slate-400 group-hover:translate-x-1 transition-transform" />
+              </div>
+              <h3 className="text-xs font-bold text-slate-900 dark:text-white mb-1">Record Incident Solution</h3>
+              <p className="text-[11px] text-slate-500 dark:text-zinc-400 leading-relaxed">Save past troubleshooting playbooks with causes and fixes for instant search.</p>
+            </Link>
+
+            <Link
+              href="/devices"
+              className="p-4 rounded-xl border border-slate-200/80 dark:border-zinc-800 bg-slate-50/70 dark:bg-zinc-950/60 hover:border-purple-500/40 dark:hover:border-purple-500/40 transition-all group"
+            >
+              <div className="flex items-center justify-between mb-2">
+                <span className="text-[10px] font-mono font-bold uppercase tracking-wider px-2 py-0.5 rounded-full bg-purple-500/10 text-purple-600 dark:text-purple-400">Step 3</span>
+                <ChevronRight className="w-4 h-4 text-slate-400 group-hover:translate-x-1 transition-transform" />
+              </div>
+              <h3 className="text-xs font-bold text-slate-900 dark:text-white mb-1">Add Network Device</h3>
+              <p className="text-[11px] text-slate-500 dark:text-zinc-400 leading-relaxed">Track switches, routers, firewalls, IP management, and contract warranties.</p>
+            </Link>
+          </div>
+        </div>
+      )}
+
+      {/* 4. Main Grid: Urgent Tasks & Knowledge Base */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* Urgent & Overdue Tasks (Span 2) */}
-        <div className="lg:col-span-2 rounded-2xl border border-slate-200/90 dark:border-zinc-800 bg-white dark:bg-zinc-900/60 p-6 shadow-xs flex flex-col justify-between">
+        <div className="lg:col-span-2 rounded-2xl border border-slate-200/90 dark:border-zinc-800 bg-white dark:bg-zinc-900/70 p-6 sm:p-7 shadow-xs flex flex-col justify-between">
           <div>
-            <div className="flex items-center justify-between mb-4">
-              <div className="flex items-center gap-2">
-                <AlertTriangle className="w-4 h-4 text-amber-500 dark:text-amber-400" />
+            <div className="flex items-center justify-between mb-5">
+              <div className="flex items-center gap-2.5">
+                <div className="p-1.5 rounded-lg bg-amber-500/10 text-amber-600 dark:text-amber-400">
+                  <AlertTriangle className="w-4 h-4" />
+                </div>
                 <h2 className="text-sm font-bold text-slate-900 dark:text-white">Priority & Overdue Tasks</h2>
               </div>
               <Link
@@ -223,9 +297,20 @@ export default async function HomePage() {
             </div>
 
             {urgentTasks.length === 0 ? (
-              <div className="py-10 text-center text-slate-500 dark:text-zinc-500 text-xs flex flex-col items-center gap-2.5">
-                <CheckCircle2 className="w-9 h-9 text-emerald-500/40" />
-                <span className="font-medium">All critical and scheduled tasks are up to date!</span>
+              <div className="py-12 text-center text-slate-500 dark:text-zinc-400 text-xs flex flex-col items-center gap-3">
+                <div className="w-12 h-12 rounded-2xl bg-emerald-50 dark:bg-emerald-500/10 flex items-center justify-center text-emerald-600 dark:text-emerald-400">
+                  <CheckCircle2 className="w-6 h-6 stroke-[2]" />
+                </div>
+                <div className="space-y-1">
+                  <p className="font-bold text-slate-800 dark:text-zinc-200">No overdue or high priority tasks</p>
+                  <p className="text-[11px] text-slate-500 dark:text-zinc-500">Your network operations queue is clean.</p>
+                </div>
+                <Link
+                  href="/tasks"
+                  className="mt-2 inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-slate-100 hover:bg-slate-200 dark:bg-zinc-800 dark:hover:bg-zinc-700 text-slate-700 dark:text-zinc-200 font-medium text-xs transition"
+                >
+                  <Plus className="w-3.5 h-3.5" /> Add New Task
+                </Link>
               </div>
             ) : (
               <div className="divide-y divide-slate-100 dark:divide-zinc-800/60">
@@ -280,7 +365,7 @@ export default async function HomePage() {
         {/* Recent Knowledge Cases & Expiring Devices */}
         <div className="space-y-6">
           {/* Recent Troubleshooting Cases */}
-          <div className="rounded-2xl border border-slate-200/90 dark:border-zinc-800 bg-white dark:bg-zinc-900/60 p-6 shadow-xs">
+          <div className="rounded-2xl border border-slate-200/90 dark:border-zinc-800 bg-white dark:bg-zinc-900/70 p-6 shadow-xs">
             <div className="flex items-center justify-between mb-4">
               <div className="flex items-center gap-2">
                 <BookOpenCheck className="w-4 h-4 text-blue-500 dark:text-blue-400" />
@@ -294,33 +379,45 @@ export default async function HomePage() {
               </Link>
             </div>
 
-            <div className="space-y-3">
-              {recentCases.map((c) => (
+            {recentCases.length === 0 ? (
+              <div className="py-8 text-center text-slate-500 dark:text-zinc-400 text-xs flex flex-col items-center gap-2.5">
+                <p>No troubleshooting cases logged yet.</p>
                 <Link
-                  key={c.id}
-                  href={`/cases/${c.id}`}
-                  className="block p-3 rounded-xl bg-slate-50/80 dark:bg-zinc-950/60 border border-slate-200/80 dark:border-zinc-800/80 hover:border-slate-300 dark:hover:border-zinc-700 transition shadow-2xs hover:scale-[1.01]"
+                  href="/cases/new"
+                  className="inline-flex items-center gap-1 px-3 py-1.5 rounded-lg bg-blue-50 dark:bg-blue-500/10 text-blue-600 dark:text-blue-400 font-medium text-xs hover:bg-blue-100 transition"
                 >
-                  <div className="flex items-center justify-between text-[11px] mb-1">
-                    <span className="font-mono text-slate-500 dark:text-zinc-400">{c.caseNumber}</span>
-                    <span className="text-[10px] px-1.5 py-0.2 rounded-md bg-slate-200/80 dark:bg-zinc-800 text-slate-700 dark:text-zinc-300 font-medium">
-                      {c.category}
-                    </span>
-                  </div>
-                  <h4 className="text-xs font-semibold text-slate-900 dark:text-white truncate">{c.title}</h4>
-                  {c.cause && (
-                    <p className="text-[11px] text-slate-600 dark:text-zinc-400 truncate mt-1">
-                      <span className="text-emerald-600 dark:text-emerald-400 font-semibold">Cause:</span> {c.cause}
-                    </p>
-                  )}
+                  <Plus className="w-3.5 h-3.5" /> Record First Solution
                 </Link>
-              ))}
-            </div>
+              </div>
+            ) : (
+              <div className="space-y-3">
+                {recentCases.map((c) => (
+                  <Link
+                    key={c.id}
+                    href={`/cases/${c.id}`}
+                    className="block p-3 rounded-xl bg-slate-50/80 dark:bg-zinc-950/60 border border-slate-200/80 dark:border-zinc-800/80 hover:border-slate-300 dark:hover:border-zinc-700 transition shadow-2xs hover:scale-[1.01]"
+                  >
+                    <div className="flex items-center justify-between text-[11px] mb-1">
+                      <span className="font-mono text-slate-500 dark:text-zinc-400">{c.caseNumber}</span>
+                      <span className="text-[10px] px-1.5 py-0.2 rounded-md bg-slate-200/80 dark:bg-zinc-800 text-slate-700 dark:text-zinc-300 font-medium">
+                        {c.category}
+                      </span>
+                    </div>
+                    <h4 className="text-xs font-semibold text-slate-900 dark:text-white truncate">{c.title}</h4>
+                    {c.cause && (
+                      <p className="text-[11px] text-slate-600 dark:text-zinc-400 truncate mt-1">
+                        <span className="text-emerald-600 dark:text-emerald-400 font-semibold">Cause:</span> {c.cause}
+                      </p>
+                    )}
+                  </Link>
+                ))}
+              </div>
+            )}
           </div>
 
           {/* Expiring Device Warranties */}
           {expiringDevices.length > 0 && (
-            <div className="rounded-2xl border border-slate-200/90 dark:border-zinc-800 bg-white dark:bg-zinc-900/60 p-6 shadow-xs">
+            <div className="rounded-2xl border border-slate-200/90 dark:border-zinc-800 bg-white dark:bg-zinc-900/70 p-6 shadow-xs">
               <div className="flex items-center gap-2 mb-3">
                 <ShieldAlert className="w-4 h-4 text-amber-500 dark:text-amber-400" />
                 <h3 className="text-xs font-bold text-slate-900 dark:text-white">Expiring Warranties (30 Days)</h3>

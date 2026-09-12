@@ -166,8 +166,8 @@ export function Sidebar() {
               className={cn(
                 "group flex items-center justify-between px-3 py-2 text-xs font-medium rounded-xl transition-all duration-150",
                 isActive
-                  ? "bg-slate-100 text-slate-900 dark:bg-zinc-800 dark:text-white shadow-xs border border-slate-200/90 dark:border-zinc-700/60 font-semibold"
-                  : "text-slate-600 dark:text-zinc-400 hover:text-slate-900 dark:hover:text-zinc-100 hover:bg-slate-50 dark:hover:bg-zinc-900/80"
+                  ? "bg-emerald-50/90 text-emerald-900 dark:bg-emerald-500/10 dark:text-emerald-400 shadow-2xs border border-emerald-200/90 dark:border-emerald-500/25 font-semibold"
+                  : "text-slate-600 dark:text-zinc-400 hover:text-slate-900 dark:hover:text-zinc-100 hover:bg-slate-100/70 dark:hover:bg-zinc-900/80"
               )}
             >
               <div className="flex items-center gap-3">
