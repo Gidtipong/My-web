@@ -15,14 +15,12 @@ export async function middleware(request: NextRequest) {
     return NextResponse.next();
   }
 
-  // 2. Dev mode & Dev Bypass check
-  const devAuthCookie = request.cookies.get("nettask_dev_auth")?.value;
-  const isDevMode = process.env.NODE_ENV !== "production";
+  // 2. Fallback check only if Supabase environment variables are not configured
   const isPlaceholderSupabase =
     !process.env.NEXT_PUBLIC_SUPABASE_URL ||
     process.env.NEXT_PUBLIC_SUPABASE_URL.includes("placeholder");
 
-  if (isDevMode || devAuthCookie === "authenticated" || isPlaceholderSupabase) {
+  if (isPlaceholderSupabase) {
     return NextResponse.next();
   }
 
