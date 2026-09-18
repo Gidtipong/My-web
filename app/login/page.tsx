@@ -3,6 +3,13 @@
 import React, { useState } from "react";
 import { createClient } from "@/lib/supabase";
 import { checkUserApprovalStatus } from "@/app/actions/settings";
+import { Turnstile } from "@/components/ui/turnstile";
+import {
+  verifyTurnstileCaptcha,
+  checkLoginRateLimit,
+  reportFailedLogin,
+  reportSuccessfulLogin,
+} from "@/app/actions/auth-security";
 import {
   Terminal,
   Mail,
@@ -28,6 +35,10 @@ export default function LoginPage() {
   const [showResend, setShowResend] = useState(false);
   const [message, setMessage] = useState<{ type: "success" | "error"; text: string } | null>(null);
 
+  // Security: Cloudflare Turnstile & Rate Limiting state
+  const [captchaToken, setCaptchaToken] = useState("");
+  const [captchaResetKey, setCaptchaResetKey] = useState(0);
+
   // Switch between Sign In and Sign Up tabs
   const handleSwitchMode = (newMode: "signin" | "signup") => {
     setMode(newMode);
@@ -35,6 +46,8 @@ export default function LoginPage() {
     setShowResend(false);
     setPassword("");
     setConfirmPassword("");
+    setCaptchaToken("");
+    setCaptchaResetKey((k) => k + 1);
   };
 
   // 1. Sign In with Email & Password
@@ -42,11 +55,43 @@ export default function LoginPage() {
     e.preventDefault();
     if (!email || !password) return;
 
+    // A. Check Rate Limiting first
+    const throttle = await checkLoginRateLimit();
+    if (!throttle.allowed) {
+      setMessage({
+        type: "error",
+        text: throttle.error || "คุณพยายามเข้าสู่ระบบบ่อยเกินไป กรุณารอสักครู่",
+      });
+      return;
+    }
+
+    // B. Check CAPTCHA
+    if (!captchaToken) {
+      setMessage({
+        type: "error",
+        text: "กรุณายืนยันความปลอดภัยผ่านกล่อง Cloudflare ด้านล่างก่อนเข้าสู่ระบบ",
+      });
+      return;
+    }
+
     setIsSubmitting(true);
     setMessage(null);
     setShowResend(false);
 
     try {
+      // C. Server-side Turnstile verification
+      const captchaCheck = await verifyTurnstileCaptcha(captchaToken);
+      if (!captchaCheck.success) {
+        setCaptchaResetKey((k) => k + 1);
+        setCaptchaToken("");
+        setMessage({
+          type: "error",
+          text: captchaCheck.error || "การตรวจสอบความปลอดภัยไม่ผ่าน กรุณาลองใหม่อีกครั้ง",
+        });
+        setIsSubmitting(false);
+        return;
+      }
+
       const supabase = createClient();
       const { data, error } = await supabase.auth.signInWithPassword({
         email: email.trim().toLowerCase(),
@@ -54,22 +99,35 @@ export default function LoginPage() {
       });
 
       if (error) {
-        const msg = error.message.toLowerCase();
-        if (msg.includes("email not confirmed")) {
+        // Record failed attempt for rate limiting
+        const failRecord = await reportFailedLogin();
+        setCaptchaResetKey((k) => k + 1);
+        setCaptchaToken("");
+
+        if (failRecord.blocked) {
           setMessage({
             type: "error",
-            text: "อีเมลนี้ยังไม่ได้กดยืนยันการสมัครในกล่องข้อความอีเมลของคุณ! กรุณาตรวจสอบกล่องจดหมาย (หรือกดปุ่มขอส่งลิงก์ยืนยันใหม่ด้านล่าง)",
-          });
-          setShowResend(true);
-        } else if (msg.includes("invalid login credentials")) {
-          setMessage({
-            type: "error",
-            text: "อีเมลหรือรหัสผ่านไม่ถูกต้อง โปรดตรวจสอบตัวสะกดหรือกดสมัครสมาชิกใหม่หากยังไม่เคยสร้างบัญชี",
+            text: "รหัสผ่านไม่ถูกต้องเกิน 5 ครั้ง! ระบบได้ล็อค IP ของคุณเป็นเวลา 15 นาที เพื่อป้องกันการโจมตี",
           });
         } else {
-          setMessage({ type: "error", text: error.message });
+          const msg = error.message.toLowerCase();
+          if (msg.includes("email not confirmed")) {
+            setMessage({
+              type: "error",
+              text: "อีเมลนี้ยังไม่ได้กดยืนยันการสมัครในกล่องข้อความอีเมลของคุณ! กรุณาตรวจสอบกล่องจดหมาย (หรือกดปุ่มขอส่งลิงก์ยืนยันใหม่ด้านล่าง)",
+            });
+            setShowResend(true);
+          } else {
+            setMessage({
+              type: "error",
+              text: `อีเมลหรือรหัสผ่านไม่ถูกต้อง (คุณสามารถลองได้อีก ${failRecord.remaining} ครั้ง ก่อนถูกล็อค)`,
+            });
+          }
         }
       } else {
+        // Reset rate limit on success
+        await reportSuccessfulLogin();
+
         const approvalCheck = await checkUserApprovalStatus();
         if (approvalCheck?.status === "PENDING") {
           setMessage({
@@ -113,11 +171,43 @@ export default function LoginPage() {
       return;
     }
 
+    // A. Check Rate Limiting
+    const throttle = await checkLoginRateLimit();
+    if (!throttle.allowed) {
+      setMessage({
+        type: "error",
+        text: throttle.error || "คุณส่งคำขอบ่อยเกินไป กรุณารอสักครู่",
+      });
+      return;
+    }
+
+    // B. Check CAPTCHA
+    if (!captchaToken) {
+      setMessage({
+        type: "error",
+        text: "กรุณายืนยันความปลอดภัยผ่านกล่อง Cloudflare ด้านล่างก่อนสมัครสมาชิก",
+      });
+      return;
+    }
+
     setIsSubmitting(true);
     setMessage(null);
     setShowResend(false);
 
     try {
+      // C. Server-side Turnstile verification
+      const captchaCheck = await verifyTurnstileCaptcha(captchaToken);
+      if (!captchaCheck.success) {
+        setCaptchaResetKey((k) => k + 1);
+        setCaptchaToken("");
+        setMessage({
+          type: "error",
+          text: captchaCheck.error || "การตรวจสอบความปลอดภัยไม่ผ่าน กรุณาลองใหม่อีกครั้ง",
+        });
+        setIsSubmitting(false);
+        return;
+      }
+
       const supabase = createClient();
       const { data, error } = await supabase.auth.signUp({
         email: email.trim().toLowerCase(),
@@ -292,7 +382,7 @@ export default function LoginPage() {
                   type="email"
                   required
                   autoFocus
-                  placeholder="engineer@company.com"
+                  placeholder="name@company.com"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   className="w-full pl-10 pr-3.5 py-2.5 rounded-xl bg-slate-50 dark:bg-zinc-950 border border-slate-200 dark:border-zinc-800 text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-zinc-500 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 focus:outline-none transition shadow-2xs"
@@ -350,6 +440,15 @@ export default function LoginPage() {
                 </div>
               </div>
             )}
+
+            {/* Cloudflare Turnstile CAPTCHA Protection */}
+            <div className="pt-1">
+              <Turnstile
+                onVerify={(token) => setCaptchaToken(token)}
+                onExpire={() => setCaptchaToken("")}
+                resetKey={captchaResetKey}
+              />
+            </div>
 
             {/* Submit Button */}
             <button

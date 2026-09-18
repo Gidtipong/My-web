@@ -1,55 +1,141 @@
-/**
- * Simple in-memory sliding window rate limiter
- * Protects API routes against brute-force or excessive spam.
- */
+import { headers } from "next/headers";
 
 interface RateLimitRecord {
   count: number;
-  resetAt: number;
+  resetTime: number;
+  blockedUntil?: number;
 }
 
-const cache = new Map<string, RateLimitRecord>();
+// In-memory token bucket store with LRU pruning
+const rateLimitStore = new Map<string, RateLimitRecord>();
 
-export interface RateLimitOptions {
-  limit?: number; // max requests within interval
-  interval?: number; // window size in milliseconds
+// Clean up stale records every 5 minutes to prevent memory leaks
+if (typeof setInterval !== "undefined") {
+  setInterval(() => {
+    const now = Date.now();
+    for (const [key, record] of rateLimitStore.entries()) {
+      if ((record.blockedUntil || record.resetTime) < now) {
+        rateLimitStore.delete(key);
+      }
+    }
+  }, 5 * 60 * 1000);
 }
 
-export function rateLimit(key: string, options: RateLimitOptions = {}) {
-  const limit = options.limit ?? 30; // default 30 requests
-  const interval = options.interval ?? 60 * 1000; // default 1 minute
+/**
+ * Extracts real client IP address from standard reverse-proxy headers
+ */
+export async function getClientIp(): Promise<string> {
+  try {
+    const headerList = await headers();
+    const forwardedFor = headerList.get("x-forwarded-for");
+    if (forwardedFor) {
+      return forwardedFor.split(",")[0].trim();
+    }
+    const realIp =
+      headerList.get("x-real-ip") ||
+      headerList.get("cf-connecting-ip") ||
+      headerList.get("true-client-ip");
+    if (realIp) return realIp.trim();
+  } catch {
+    // In environments where headers() is unavailable
+  }
+  return "127.0.0.1";
+}
+
+/**
+ * Checks and records authentication rate limits (Anti-Brute Force)
+ * Max 5 failed attempts per 15 minutes per IP.
+ */
+export async function checkAuthRateLimit(customIp?: string): Promise<{
+  allowed: boolean;
+  remaining: number;
+  cooldownSeconds: number;
+  error?: string;
+}> {
+  const ip = customIp || (await getClientIp());
+  const key = `auth:${ip}`;
   const now = Date.now();
+  const windowMs = 15 * 60 * 1000; // 15 minutes
+  const maxAttempts = 5;
 
-  const record = cache.get(key);
+  const record = rateLimitStore.get(key);
 
-  if (!record || now > record.resetAt) {
-    cache.set(key, {
-      count: 1,
-      resetAt: now + interval,
-    });
+  // If currently blocked
+  if (record?.blockedUntil && record.blockedUntil > now) {
+    const cooldownSeconds = Math.ceil((record.blockedUntil - now) / 1000);
+    const minutes = Math.ceil(cooldownSeconds / 60);
     return {
-      success: true,
-      limit,
-      remaining: limit - 1,
-      reset: Math.ceil((now + interval) / 1000),
-    };
-  }
-
-  if (record.count >= limit) {
-    return {
-      success: false,
-      limit,
+      allowed: false,
       remaining: 0,
-      reset: Math.ceil(record.resetAt / 1000),
+      cooldownSeconds,
+      error: `ตรวจพบการพยายามเข้าสู่ระบบผิดพลาดเกินกำหนด ระบบได้ล็อค IP ของคุณชั่วคราวเพื่อความปลอดภัย กรุณารออีก ${minutes} นาที (${cooldownSeconds} วินาที)`,
     };
   }
 
-  record.count += 1;
+  if (!record || record.resetTime < now) {
+    return {
+      allowed: true,
+      remaining: maxAttempts,
+      cooldownSeconds: 0,
+    };
+  }
+
+  const remaining = Math.max(0, maxAttempts - record.count);
   return {
-    success: true,
-    limit,
-    remaining: limit - record.count,
-    reset: Math.ceil(record.resetAt / 1000),
+    allowed: record.count < maxAttempts,
+    remaining,
+    cooldownSeconds: 0,
   };
 }
 
+/**
+ * Records a failed authentication attempt.
+ * If 5 failed attempts are reached, blocks the IP for 15 minutes.
+ */
+export async function recordFailedAuthAttempt(customIp?: string): Promise<{
+  blocked: boolean;
+  remaining: number;
+  cooldownSeconds: number;
+}> {
+  const ip = customIp || (await getClientIp());
+  const key = `auth:${ip}`;
+  const now = Date.now();
+  const windowMs = 15 * 60 * 1000; // 15 minutes
+  const maxAttempts = 5;
+
+  let record = rateLimitStore.get(key);
+
+  if (!record || record.resetTime < now) {
+    record = {
+      count: 1,
+      resetTime: now + windowMs,
+    };
+  } else {
+    record.count += 1;
+  }
+
+  if (record.count >= maxAttempts) {
+    record.blockedUntil = now + windowMs;
+    rateLimitStore.set(key, record);
+    return {
+      blocked: true,
+      remaining: 0,
+      cooldownSeconds: Math.ceil(windowMs / 1000),
+    };
+  }
+
+  rateLimitStore.set(key, record);
+  return {
+    blocked: false,
+    remaining: Math.max(0, maxAttempts - record.count),
+    cooldownSeconds: 0,
+  };
+}
+
+/**
+ * Resets authentication rate limit upon successful login
+ */
+export async function resetAuthRateLimit(customIp?: string): Promise<void> {
+  const ip = customIp || (await getClientIp());
+  rateLimitStore.delete(`auth:${ip}`);
+}

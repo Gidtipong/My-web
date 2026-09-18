@@ -126,9 +126,9 @@ export function SettingsView({ stats }: SettingsViewProps) {
     return true;
   });
 
-  const userEmail = stats.user?.email || "engineer@company.com";
-  const userName = stats.user?.name || userEmail.split("@")[0].toUpperCase();
-  const userInitials = userEmail.slice(0, 2).toUpperCase();
+  const userEmail = stats.user?.email || "";
+  const userName = stats.user?.name || (userEmail ? userEmail.split("@")[0].toUpperCase() : "ADMIN");
+  const userInitials = (userEmail || "AD").slice(0, 2).toUpperCase();
 
   const handleTestNotification = () => {
     startNotifyTransition(async () => {

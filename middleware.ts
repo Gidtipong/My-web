@@ -16,16 +16,7 @@ export async function middleware(request: NextRequest) {
     return NextResponse.next();
   }
 
-  // 2. Fallback check only if Supabase environment variables are not configured
-  const isPlaceholderSupabase =
-    !process.env.NEXT_PUBLIC_SUPABASE_URL ||
-    process.env.NEXT_PUBLIC_SUPABASE_URL.includes("placeholder");
-
-  if (isPlaceholderSupabase) {
-    return NextResponse.next();
-  }
-
-  // 3. Supabase Auth Session Validation
+  // 2. Supabase Auth Session Validation
   let response = NextResponse.next({
     request: {
       headers: request.headers,
