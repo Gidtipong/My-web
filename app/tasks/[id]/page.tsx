@@ -3,6 +3,7 @@ import { notFound } from "next/navigation";
 import { getTaskById } from "@/app/actions/tasks";
 import { db } from "@/lib/db";
 import { TaskDetailClient } from "@/components/tasks/task-detail-client";
+import { guardApprovedPage } from "@/lib/auth-guard";
 
 export async function generateMetadata({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
@@ -17,6 +18,7 @@ export async function generateMetadata({ params }: { params: Promise<{ id: strin
 }
 
 export default async function TaskDetailPage({ params }: { params: Promise<{ id: string }> }) {
+  await guardApprovedPage();
   const { id } = await params;
   const [taskRes, sites, devices] = await Promise.all([
     getTaskById(id),

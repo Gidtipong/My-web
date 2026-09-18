@@ -2,6 +2,7 @@ import React from "react";
 import { notFound } from "next/navigation";
 import { getCaseById } from "@/app/actions/cases";
 import { CaseDetailView } from "@/components/cases/case-detail-view";
+import { guardApprovedPage } from "@/lib/auth-guard";
 
 export async function generateMetadata({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
@@ -16,6 +17,7 @@ export async function generateMetadata({ params }: { params: Promise<{ id: strin
 }
 
 export default async function CaseDetailPage({ params }: { params: Promise<{ id: string }> }) {
+  await guardApprovedPage();
   const { id } = await params;
   const res = await getCaseById(id);
 

@@ -2,6 +2,7 @@ import React from "react";
 import { Metadata } from "next";
 import { db } from "@/lib/db";
 import { CalendarWrapper } from "@/components/calendar/calendar-wrapper";
+import { guardApprovedPage } from "@/lib/auth-guard";
 
 export const revalidate = 15;
 
@@ -11,6 +12,7 @@ export const metadata: Metadata = {
 };
 
 export default async function CalendarPage() {
+  await guardApprovedPage();
   const tasks = await db.task.findMany({
     where: {
       deletedAt: null,

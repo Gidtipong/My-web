@@ -3,6 +3,7 @@
 import { revalidatePath } from "next/cache";
 import { db } from "@/lib/db";
 import { siteSchema } from "@/lib/validations";
+import { requireApprovedUser } from "@/lib/auth-guard";
 
 export async function getSites() {
   return db.site.findMany({
@@ -21,6 +22,7 @@ export async function getSites() {
 
 export async function createSite(data: any) {
   try {
+    await requireApprovedUser();
     const validated = siteSchema.parse(data);
     const site = await db.site.create({
       data: validated,
@@ -37,6 +39,7 @@ export async function createSite(data: any) {
 
 export async function updateSite(id: string, data: any) {
   try {
+    await requireApprovedUser();
     const validated = siteSchema.partial().parse(data);
     const site = await db.site.update({
       where: { id },
@@ -52,6 +55,7 @@ export async function updateSite(id: string, data: any) {
 
 export async function deleteSite(id: string) {
   try {
+    await requireApprovedUser();
     await db.site.update({
       where: { id },
       data: { deletedAt: new Date() },

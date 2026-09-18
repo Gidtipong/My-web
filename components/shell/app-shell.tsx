@@ -19,7 +19,10 @@ export function AppShell({ children }: AppShellProps) {
   const [commandPaletteOpen, setCommandPaletteOpen] = useState(false);
   const [quickTaskOpen, setQuickTaskOpen] = useState(false);
 
-  const isAuthPage = pathname === "/login" || pathname?.startsWith("/auth");
+  const isAuthPage =
+    pathname === "/login" ||
+    pathname?.startsWith("/auth") ||
+    pathname === "/pending-approval";
 
   // Global Keyboard Shortcuts Handler
   // Ctrl/Cmd + K : Open command palette

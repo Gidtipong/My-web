@@ -2,6 +2,7 @@
 
 import React, { useState } from "react";
 import { createClient } from "@/lib/supabase";
+import { checkUserApprovalStatus } from "@/app/actions/settings";
 import {
   Terminal,
   Mail,
@@ -69,11 +70,26 @@ export default function LoginPage() {
           setMessage({ type: "error", text: error.message });
         }
       } else {
-        setMessage({
-          type: "success",
-          text: "เข้าสู่ระบบสำเร็จ! กำลังนำท่านเข้าสู่หน้าคอนโซล...",
-        });
-        window.location.href = "/";
+        const approvalCheck = await checkUserApprovalStatus();
+        if (approvalCheck?.status === "PENDING") {
+          setMessage({
+            type: "success",
+            text: "เข้าสู่ระบบสำเร็จ! บัญชีของคุณอยู่ระหว่างรอการอนุมัติจาก Admin กำลังนำท่านไปที่หน้ารออนุมัติ...",
+          });
+          window.location.href = "/pending-approval";
+        } else if (approvalCheck?.status === "REJECTED") {
+          setMessage({
+            type: "error",
+            text: "บัญชีของคุณไม่ได้รับการอนุมัติการเข้าใช้งานจาก Admin กรุณาติดต่อผู้ดูแลระบบ",
+          });
+          await supabase.auth.signOut();
+        } else {
+          setMessage({
+            type: "success",
+            text: "เข้าสู่ระบบสำเร็จ! กำลังนำท่านเข้าสู่หน้าคอนโซล...",
+          });
+          window.location.href = "/";
+        }
       }
     } catch (err: any) {
       setMessage({ type: "error", text: err.message || "เกิดข้อผิดพลาดในการเข้าสู่ระบบ" });
@@ -123,11 +139,20 @@ export default function LoginPage() {
           setMessage({ type: "error", text: error.message });
         }
       } else if (data?.session) {
-        setMessage({
-          type: "success",
-          text: "สมัครสมาชิกและเข้าสู่ระบบสำเร็จ! กำลังเข้าสู่หน้าคอนโซล...",
-        });
-        window.location.href = "/";
+        const approvalCheck = await checkUserApprovalStatus();
+        if (approvalCheck?.status === "PENDING") {
+          setMessage({
+            type: "success",
+            text: "สมัครสมาชิกสำเร็จ! บัญชีของคุณอยู่ระหว่างรอการอนุมัติจาก Admin กำลังนำท่านไปที่หน้ารออนุมัติ...",
+          });
+          window.location.href = "/pending-approval";
+        } else {
+          setMessage({
+            type: "success",
+            text: "สมัครสมาชิกและเข้าสู่ระบบสำเร็จ! กำลังเข้าสู่หน้าคอนโซล...",
+          });
+          window.location.href = "/";
+        }
       } else {
         setMessage({
           type: "success",

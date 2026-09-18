@@ -2,6 +2,7 @@ import React from "react";
 import { Metadata } from "next";
 import { db } from "@/lib/db";
 import { SitesClient } from "@/components/sites/sites-client";
+import { guardApprovedPage } from "@/lib/auth-guard";
 
 export const revalidate = 15;
 
@@ -11,6 +12,7 @@ export const metadata: Metadata = {
 };
 
 export default async function SitesPage() {
+  await guardApprovedPage();
   const sites = await db.site.findMany({
     where: { deletedAt: null },
     include: {

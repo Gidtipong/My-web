@@ -1,8 +1,10 @@
 "use server";
 
+import { revalidatePath } from "next/cache";
 import { db } from "@/lib/db";
 import { notifier } from "@/lib/notify";
-import { createServerSupabaseClient } from "@/lib/supabase-server";
+import { getCurrentDbUser, requireAdminUser } from "@/lib/auth-guard";
+import { UserRole, UserStatus } from "@prisma/client";
 
 export async function getSystemStats() {
   const [siteCount, deviceCount, taskCount, caseCount, userCount] = await Promise.all([
@@ -13,33 +15,25 @@ export async function getSystemStats() {
     db.user.count({ where: { deletedAt: null } }),
   ]);
 
-  let activeUser: any = null;
+  const activeUser = await getCurrentDbUser();
 
-  try {
-    const supabase = await createServerSupabaseClient();
-    const {
-      data: { user: authUser },
-    } = await supabase.auth.getUser();
-
-    if (authUser?.email) {
-      const dbUser = await db.user.findUnique({
-        where: { email: authUser.email },
-      });
-
-      activeUser = {
-        name: dbUser?.name || authUser.user_metadata?.name || authUser.email.split("@")[0].toUpperCase(),
-        email: authUser.email,
-        role: dbUser?.role || "ADMIN",
-      };
-    }
-  } catch (err) {
-    console.error("Failed to get auth user in getSystemStats:", err);
-  }
-
-  if (!activeUser) {
-    activeUser = await db.user.findFirst({
+  // If active user is ADMIN, also fetch all users for user approval management
+  let allUsers: any[] = [];
+  if (activeUser?.role === UserRole.ADMIN) {
+    allUsers = await db.user.findMany({
       where: { deletedAt: null },
-      orderBy: { createdAt: "asc" },
+      orderBy: [
+        { status: "asc" }, // PENDING first
+        { createdAt: "desc" },
+      ],
+      select: {
+        id: true,
+        email: true,
+        name: true,
+        role: true,
+        status: true,
+        createdAt: true,
+      },
     });
   }
 
@@ -50,11 +44,73 @@ export async function getSystemStats() {
     caseCount,
     userCount,
     user: activeUser,
+    usersList: allUsers,
     envStatus: {
       telegramConfigured: !!(process.env.TELEGRAM_BOT_TOKEN && process.env.TELEGRAM_CHAT_ID),
       cronSecretConfigured: !!process.env.CRON_SECRET,
       databaseUrlConfigured: !!process.env.DATABASE_URL,
     },
+  };
+}
+
+export async function approveUser(userId: string) {
+  try {
+    await requireAdminUser();
+
+    const updated = await db.user.update({
+      where: { id: userId },
+      data: { status: UserStatus.APPROVED },
+    });
+
+    revalidatePath("/settings");
+    return { success: true, user: updated };
+  } catch (error: any) {
+    return { success: false, error: error.message };
+  }
+}
+
+export async function rejectUser(userId: string) {
+  try {
+    await requireAdminUser();
+
+    const updated = await db.user.update({
+      where: { id: userId },
+      data: { status: UserStatus.REJECTED },
+    });
+
+    revalidatePath("/settings");
+    return { success: true, user: updated };
+  } catch (error: any) {
+    return { success: false, error: error.message };
+  }
+}
+
+export async function updateUserRole(userId: string, role: UserRole) {
+  try {
+    await requireAdminUser();
+
+    const updated = await db.user.update({
+      where: { id: userId },
+      data: { role },
+    });
+
+    revalidatePath("/settings");
+    return { success: true, user: updated };
+  } catch (error: any) {
+    return { success: false, error: error.message };
+  }
+}
+
+export async function checkUserApprovalStatus() {
+  const user = await getCurrentDbUser();
+  if (!user) {
+    return { authenticated: false };
+  }
+  return {
+    authenticated: true,
+    status: user.status,
+    role: user.role,
+    email: user.email,
   };
 }
 

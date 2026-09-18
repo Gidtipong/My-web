@@ -2,6 +2,7 @@ import React from "react";
 import { Metadata } from "next";
 import { getSystemStats } from "@/app/actions/settings";
 import { SettingsView } from "@/components/settings/settings-view";
+import { guardApprovedPage } from "@/lib/auth-guard";
 
 export const dynamic = "force-dynamic";
 
@@ -11,6 +12,7 @@ export const metadata: Metadata = {
 };
 
 export default async function SettingsPage() {
+  await guardApprovedPage();
   const stats = await getSystemStats();
 
   return (

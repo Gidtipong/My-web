@@ -3,6 +3,7 @@
 import { revalidatePath } from "next/cache";
 import { db } from "@/lib/db";
 import { deviceSchema } from "@/lib/validations";
+import { requireApprovedUser } from "@/lib/auth-guard";
 
 export async function getDevices() {
   return db.device.findMany({
@@ -16,6 +17,7 @@ export async function getDevices() {
 
 export async function createDevice(data: any) {
   try {
+    await requireApprovedUser();
     const validated = deviceSchema.parse(data);
     const existing = await db.device.findUnique({
       where: { hostname: validated.hostname },
@@ -39,6 +41,7 @@ export async function createDevice(data: any) {
 
 export async function updateDevice(id: string, data: any) {
   try {
+    await requireApprovedUser();
     const validated = deviceSchema.partial().parse(data);
     const device = await db.device.update({
       where: { id },
@@ -54,6 +57,7 @@ export async function updateDevice(id: string, data: any) {
 
 export async function deleteDevice(id: string) {
   try {
+    await requireApprovedUser();
     await db.device.update({
       where: { id },
       data: { deletedAt: new Date() },

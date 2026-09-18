@@ -5,6 +5,7 @@ import { db } from "@/lib/db";
 import { taskSchema, checklistSchema, noteSchema } from "@/lib/validations";
 import { TaskStatus, TaskPriority, TaskType, Prisma } from "@prisma/client";
 import { startOfDay, endOfDay, startOfWeek, endOfWeek } from "date-fns";
+import { requireApprovedUser } from "@/lib/auth-guard";
 
 export interface TaskFilterParams {
   tab?: "all" | "open" | "today" | "this_week" | "done";
@@ -134,6 +135,7 @@ export async function getTaskById(id: string) {
 
 export async function createTask(rawData: any) {
   try {
+    await requireApprovedUser();
     const validated = taskSchema.parse(rawData);
 
     // Rule: Rollback plan is REQUIRED when type = CHANGE
@@ -197,6 +199,7 @@ export async function createTask(rawData: any) {
 
 export async function updateTask(id: string, rawData: any) {
   try {
+    await requireApprovedUser();
     const validated = taskSchema.partial().parse(rawData);
 
     if (validated.type === "CHANGE" && (!validated.rollbackPlan || !validated.rollbackPlan.trim())) {
@@ -239,6 +242,7 @@ export async function updateTask(id: string, rawData: any) {
 
 export async function updateTaskStatus(id: string, newStatus: TaskStatus) {
   try {
+    await requireApprovedUser();
     const isDone = newStatus === TaskStatus.DONE;
     const task = await db.task.update({
       where: { id },
@@ -268,6 +272,7 @@ export async function updateTaskStatus(id: string, newStatus: TaskStatus) {
 
 export async function deleteTask(id: string) {
   try {
+    await requireApprovedUser();
     // Soft delete
     const task = await db.task.update({
       where: { id },
@@ -295,6 +300,7 @@ export async function bulkUpdateTasks(
   action: { status?: TaskStatus; priority?: TaskPriority; delete?: boolean }
 ) {
   try {
+    await requireApprovedUser();
     if (action.delete) {
       await db.task.updateMany({
         where: { id: { in: ids } },

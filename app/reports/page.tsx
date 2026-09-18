@@ -2,6 +2,7 @@ import React from "react";
 import { Metadata } from "next";
 import { getReportsData } from "@/app/actions/reports";
 import { ReportsDashboard } from "@/components/reports/reports-dashboard";
+import { guardApprovedPage } from "@/lib/auth-guard";
 
 export const revalidate = 30;
 
@@ -11,6 +12,7 @@ export const metadata: Metadata = {
 };
 
 export default async function ReportsPage() {
+  await guardApprovedPage();
   const initialData = await getReportsData(30);
 
   return (

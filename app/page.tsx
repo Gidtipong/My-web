@@ -20,10 +20,12 @@ import {
   ChevronRight,
 } from "lucide-react";
 import { TaskPriority, TaskStatus } from "@prisma/client";
+import { guardApprovedPage } from "@/lib/auth-guard";
 
 export const revalidate = 15;
 
 export default async function HomePage() {
+  await guardApprovedPage();
   const now = new Date();
 
   // Run 1 consolidated counts query + 3 selective queries in parallel

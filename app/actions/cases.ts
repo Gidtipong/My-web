@@ -4,6 +4,7 @@ import { revalidatePath } from "next/cache";
 import { db } from "@/lib/db";
 import { caseSchema } from "@/lib/validations";
 import { CaseCategory, CaseSeverity, Prisma } from "@prisma/client";
+import { requireApprovedUser } from "@/lib/auth-guard";
 
 export interface CaseSearchParams {
   query?: string;
@@ -178,6 +179,7 @@ export async function getCaseById(id: string) {
 
 export async function createCase(rawData: any) {
   try {
+    await requireApprovedUser();
     // Generate auto caseNumber: CASE-YYYY-NNNN
     const currentYear = new Date().getFullYear();
     const countThisYear = await db.case.count({
@@ -234,6 +236,7 @@ export async function createCase(rawData: any) {
 
 export async function updateCase(id: string, rawData: any) {
   try {
+    await requireApprovedUser();
     const validated = caseSchema.partial().parse(rawData);
 
     const updated = await db.case.update({

@@ -2,6 +2,7 @@ import React from "react";
 import { db } from "@/lib/db";
 import { getAllTags } from "@/app/actions/cases";
 import { CasesExplorer } from "@/components/cases/cases-explorer";
+import { guardApprovedPage } from "@/lib/auth-guard";
 
 export const metadata = {
   title: "Knowledge Base — NetTask",
@@ -11,6 +12,7 @@ export const metadata = {
 export const revalidate = 15;
 
 export default async function CasesPage() {
+  await guardApprovedPage();
   const [cases, tagsRes, sites] = await Promise.all([
     db.case.findMany({
       where: { deletedAt: null },

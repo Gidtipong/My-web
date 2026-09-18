@@ -3,8 +3,10 @@ import { notFound } from "next/navigation";
 import { db } from "@/lib/db";
 import { getCaseById, getAllTags } from "@/app/actions/cases";
 import { CaseForm } from "@/components/cases/case-form";
+import { guardApprovedPage } from "@/lib/auth-guard";
 
 export default async function EditCasePage({ params }: { params: Promise<{ id: string }> }) {
+  await guardApprovedPage();
   const { id } = await params;
 
   const [caseRes, sites, devices, tagsRes] = await Promise.all([

@@ -1,6 +1,7 @@
 import React from "react";
 import { db } from "@/lib/db";
 import { TasksPageClient } from "@/components/tasks/tasks-page-client";
+import { guardApprovedPage } from "@/lib/auth-guard";
 
 export const metadata = {
   title: "Tasks — NetTask",
@@ -10,6 +11,7 @@ export const metadata = {
 export const revalidate = 10;
 
 export default async function TasksPage() {
+  await guardApprovedPage();
   // Direct Server Component queries
   const [tasks, sites, devices] = await Promise.all([
     db.task.findMany({

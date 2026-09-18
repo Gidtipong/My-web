@@ -2,6 +2,7 @@ import React from "react";
 import { db } from "@/lib/db";
 import { getAllTags } from "@/app/actions/cases";
 import { CaseForm } from "@/components/cases/case-form";
+import { guardApprovedPage } from "@/lib/auth-guard";
 
 export const metadata = {
   title: "New Knowledge Case — NetTask",
@@ -13,6 +14,7 @@ export default async function NewCasePage({
 }: {
   searchParams: Promise<{ [key: string]: string | undefined }>;
 }) {
+  await guardApprovedPage();
   const params = await searchParams;
 
   const [sites, devices, tagsRes] = await Promise.all([

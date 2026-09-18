@@ -2,6 +2,7 @@ import React from "react";
 import { Metadata } from "next";
 import { db } from "@/lib/db";
 import { DevicesClient } from "@/components/devices/devices-client";
+import { guardApprovedPage } from "@/lib/auth-guard";
 
 export const revalidate = 15;
 
@@ -11,6 +12,7 @@ export const metadata: Metadata = {
 };
 
 export default async function DevicesPage() {
+  await guardApprovedPage();
   const [devices, sites] = await Promise.all([
     db.device.findMany({
       where: { deletedAt: null },
