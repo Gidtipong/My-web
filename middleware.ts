@@ -66,6 +66,9 @@ export async function middleware(request: NextRequest) {
     }
   } catch (err) {
     console.error("Middleware auth check error:", err);
+    const loginUrl = new URL("/login", request.url);
+    loginUrl.searchParams.set("next", pathname);
+    return NextResponse.redirect(loginUrl);
   }
 
   return response;
