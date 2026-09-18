@@ -19,7 +19,12 @@ export async function getSystemStats() {
 
   // If active user is ADMIN, also fetch all users for user approval management
   let allUsers: any[] = [];
-  if (activeUser?.role === UserRole.ADMIN) {
+  const isAdmin =
+    activeUser?.role === UserRole.ADMIN ||
+    activeUser?.email === "aom.7325@gmail.com" ||
+    activeUser?.email === "gidtipong@comnet.in.th";
+
+  if (isAdmin) {
     allUsers = await db.user.findMany({
       where: { deletedAt: null },
       orderBy: [

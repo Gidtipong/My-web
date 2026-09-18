@@ -58,7 +58,11 @@ export function SettingsView({ stats }: SettingsViewProps) {
   const [actionLoadingId, setActionLoadingId] = useState<string | null>(null);
   const [userActionFeedback, setUserActionFeedback] = useState<string | null>(null);
 
-  const isAdmin = stats.user?.role === "ADMIN";
+  const isAdmin =
+    stats.user?.role === "ADMIN" ||
+    stats.user?.role === "admin" ||
+    stats.user?.email === "aom.7325@gmail.com" ||
+    stats.user?.email === "gidtipong@comnet.in.th";
   const pendingCount = users.filter((u) => u.status === "PENDING").length;
 
   const handleApprove = async (userId: string, targetEmail: string) => {
@@ -207,145 +211,7 @@ export function SettingsView({ stats }: SettingsViewProps) {
         </div>
       </div>
 
-      {/* 2. System Inventory & Database Statistics */}
-      <div className="p-6 rounded-2xl bg-white dark:bg-zinc-900/80 border border-slate-200/90 dark:border-zinc-800 shadow-xs">
-        <h3 className="text-sm font-bold text-slate-900 dark:text-white flex items-center gap-2 mb-4">
-          <Database className="w-4 h-4 text-emerald-600 dark:text-emerald-400" />
-          System & Database Statistics
-        </h3>
-
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
-          <div className="p-4 rounded-xl bg-slate-50/80 dark:bg-zinc-950/60 border border-slate-200/80 dark:border-zinc-800">
-            <span className="text-xs text-slate-500 dark:text-zinc-500 font-medium">Network Sites</span>
-            <p className="text-2xl font-extrabold font-mono text-slate-900 dark:text-white mt-1">{stats.siteCount}</p>
-          </div>
-          <div className="p-4 rounded-xl bg-slate-50/80 dark:bg-zinc-950/60 border border-slate-200/80 dark:border-zinc-800">
-            <span className="text-xs text-slate-500 dark:text-zinc-500 font-medium">Managed Devices</span>
-            <p className="text-2xl font-extrabold font-mono text-slate-900 dark:text-white mt-1">{stats.deviceCount}</p>
-          </div>
-          <div className="p-4 rounded-xl bg-slate-50/80 dark:bg-zinc-950/60 border border-slate-200/80 dark:border-zinc-800">
-            <span className="text-xs text-slate-500 dark:text-zinc-500 font-medium">Active Tasks</span>
-            <p className="text-2xl font-extrabold font-mono text-slate-900 dark:text-white mt-1">{stats.taskCount}</p>
-          </div>
-          <div className="p-4 rounded-xl bg-slate-50/80 dark:bg-zinc-950/60 border border-slate-200/80 dark:border-zinc-800">
-            <span className="text-xs text-slate-500 dark:text-zinc-500 font-medium">Knowledge Cases</span>
-            <p className="text-2xl font-extrabold font-mono text-slate-900 dark:text-white mt-1">{stats.caseCount}</p>
-          </div>
-        </div>
-
-        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 p-4 rounded-xl bg-slate-50/80 dark:bg-zinc-950/80 border border-slate-200/80 dark:border-zinc-800">
-          <div>
-            <h4 className="text-xs font-bold text-slate-900 dark:text-zinc-200 flex items-center gap-2">
-              <HardDrive className="w-4 h-4 text-blue-500" />
-              Full System Backup & Migration Dump
-            </h4>
-            <p className="text-xs text-slate-500 dark:text-zinc-500 mt-1">
-              Export all database tables (sites, devices, tasks, checklists, notes, cases) to structured JSON.
-            </p>
-          </div>
-          <button
-            onClick={handleExportBackup}
-            disabled={isExporting}
-            className="flex items-center gap-2 px-4 py-2 text-xs font-semibold text-white bg-emerald-600 hover:bg-emerald-500 disabled:opacity-50 rounded-xl transition shadow-xs shrink-0 cursor-pointer"
-          >
-            {isExporting ? (
-              <Loader2 className="w-4 h-4 animate-spin" />
-            ) : (
-              <Download className="w-4 h-4" />
-            )}
-            Download JSON Backup
-          </button>
-        </div>
-      </div>
-
-      {/* 3. Notification Integrations */}
-      <div className="p-6 rounded-2xl bg-white dark:bg-zinc-900/80 border border-slate-200/90 dark:border-zinc-800 shadow-xs">
-        <h3 className="text-sm font-bold text-slate-900 dark:text-white flex items-center gap-2 mb-4">
-          <Bell className="w-4 h-4 text-emerald-600 dark:text-emerald-400" />
-          Alerts & Notification Channels
-        </h3>
-
-        <div className="space-y-4">
-          {/* Telegram Card */}
-          <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 p-4 rounded-xl bg-slate-50/80 dark:bg-zinc-950/60 border border-slate-200/80 dark:border-zinc-800">
-            <div className="flex items-start gap-3">
-              <div className="w-9 h-9 rounded-xl bg-sky-500/15 text-sky-600 dark:text-sky-400 flex items-center justify-center shrink-0 border border-sky-500/25">
-                <Send className="w-4 h-4" />
-              </div>
-              <div>
-                <div className="flex items-center gap-2">
-                  <h4 className="text-xs font-bold text-slate-900 dark:text-white">Telegram Bot Digest</h4>
-                  {stats.envStatus.telegramConfigured ? (
-                    <span className="px-2 py-0.5 rounded-full text-[10px] font-medium bg-emerald-500/10 text-emerald-700 dark:text-emerald-400 border border-emerald-500/20">
-                      Configured
-                    </span>
-                  ) : (
-                    <span className="px-2 py-0.5 rounded-full text-[10px] font-medium bg-amber-500/10 text-amber-700 dark:text-amber-400 border border-amber-500/20">
-                      Console Fallback (Set TELEGRAM_BOT_TOKEN)
-                    </span>
-                  )}
-                </div>
-                <p className="text-xs text-slate-500 dark:text-zinc-400 mt-1">
-                  Daily 08:00 morning digest of overdue tasks, due today, and devices with expiring warranties.
-                </p>
-              </div>
-            </div>
-
-            <button
-              onClick={handleTestNotification}
-              disabled={isNotifying}
-              className="flex items-center gap-2 px-3.5 py-1.5 text-xs font-medium text-slate-700 dark:text-zinc-300 bg-white dark:bg-zinc-800 hover:bg-slate-100 dark:hover:bg-zinc-700 disabled:opacity-50 rounded-xl border border-slate-200 dark:border-zinc-700 transition shadow-2xs shrink-0 cursor-pointer"
-            >
-              {isNotifying ? (
-                <Loader2 className="w-3.5 h-3.5 animate-spin" />
-              ) : (
-                <Send className="w-3.5 h-3.5" />
-              )}
-              Send Test Message
-            </button>
-          </div>
-
-          {notifyResult && (
-            <div
-              className={`p-3 rounded-xl text-xs flex items-center gap-2 ${
-                notifyResult.success
-                  ? "bg-emerald-500/10 text-emerald-700 dark:text-emerald-400 border border-emerald-500/20"
-                  : "bg-red-500/10 text-red-600 dark:text-red-400 border border-red-500/20"
-              }`}
-            >
-              {notifyResult.success ? (
-                <>
-                  <CheckCircle2 className="w-4 h-4 shrink-0" />
-                  <span>
-                    Test notification sent successfully!{" "}
-                    {!notifyResult.isConfigured &&
-                      "(Printed to server console because TELEGRAM_BOT_TOKEN is not configured in .env)"}
-                  </span>
-                </>
-              ) : (
-                <>
-                  <AlertTriangle className="w-4 h-4 shrink-0" />
-                  <span>Failed to send notification: {notifyResult.error}</span>
-                </>
-              )}
-            </div>
-          )}
-
-          {/* Cron Schedule Info */}
-          <div className="p-4 rounded-xl bg-slate-50/50 dark:bg-zinc-950/40 border border-slate-200/80 dark:border-zinc-800/80 flex items-start gap-3">
-            <Clock className="w-4 h-4 text-slate-400 dark:text-zinc-400 shrink-0 mt-0.5" />
-            <div className="text-xs text-slate-600 dark:text-zinc-400">
-              <span className="font-semibold text-slate-800 dark:text-zinc-200">Scheduled Vercel Cron Jobs:</span>
-              <ul className="mt-1 space-y-1 list-disc list-inside font-mono text-[11px] text-slate-500 dark:text-zinc-400">
-                <li>0 1 * * * (08:00 Asia/Bangkok) → Daily Reminder Digest</li>
-                <li>10 0 * * * (07:10 Asia/Bangkok) → Recurring Tasks Generator</li>
-              </ul>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      {/* User Access & Approval Management (Admin Only) */}
+      {/* 2. User Access & Approval Management (Admin Only) */}
       {isAdmin && (
         <div className="p-6 rounded-2xl bg-white dark:bg-zinc-900/80 border border-slate-200/90 dark:border-zinc-800 shadow-xs">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
@@ -538,6 +404,144 @@ export function SettingsView({ stats }: SettingsViewProps) {
           </div>
         </div>
       )}
+
+      {/* 3. System Inventory & Database Statistics */}
+      <div className="p-6 rounded-2xl bg-white dark:bg-zinc-900/80 border border-slate-200/90 dark:border-zinc-800 shadow-xs">
+        <h3 className="text-sm font-bold text-slate-900 dark:text-white flex items-center gap-2 mb-4">
+          <Database className="w-4 h-4 text-emerald-600 dark:text-emerald-400" />
+          System & Database Statistics
+        </h3>
+
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
+          <div className="p-4 rounded-xl bg-slate-50/80 dark:bg-zinc-950/60 border border-slate-200/80 dark:border-zinc-800">
+            <span className="text-xs text-slate-500 dark:text-zinc-500 font-medium">Network Sites</span>
+            <p className="text-2xl font-extrabold font-mono text-slate-900 dark:text-white mt-1">{stats.siteCount}</p>
+          </div>
+          <div className="p-4 rounded-xl bg-slate-50/80 dark:bg-zinc-950/60 border border-slate-200/80 dark:border-zinc-800">
+            <span className="text-xs text-slate-500 dark:text-zinc-500 font-medium">Managed Devices</span>
+            <p className="text-2xl font-extrabold font-mono text-slate-900 dark:text-white mt-1">{stats.deviceCount}</p>
+          </div>
+          <div className="p-4 rounded-xl bg-slate-50/80 dark:bg-zinc-950/60 border border-slate-200/80 dark:border-zinc-800">
+            <span className="text-xs text-slate-500 dark:text-zinc-500 font-medium">Active Tasks</span>
+            <p className="text-2xl font-extrabold font-mono text-slate-900 dark:text-white mt-1">{stats.taskCount}</p>
+          </div>
+          <div className="p-4 rounded-xl bg-slate-50/80 dark:bg-zinc-950/60 border border-slate-200/80 dark:border-zinc-800">
+            <span className="text-xs text-slate-500 dark:text-zinc-500 font-medium">Knowledge Cases</span>
+            <p className="text-2xl font-extrabold font-mono text-slate-900 dark:text-white mt-1">{stats.caseCount}</p>
+          </div>
+        </div>
+
+        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 p-4 rounded-xl bg-slate-50/80 dark:bg-zinc-950/80 border border-slate-200/80 dark:border-zinc-800">
+          <div>
+            <h4 className="text-xs font-bold text-slate-900 dark:text-zinc-200 flex items-center gap-2">
+              <HardDrive className="w-4 h-4 text-blue-500" />
+              Full System Backup & Migration Dump
+            </h4>
+            <p className="text-xs text-slate-500 dark:text-zinc-500 mt-1">
+              Export all database tables (sites, devices, tasks, checklists, notes, cases) to structured JSON.
+            </p>
+          </div>
+          <button
+            onClick={handleExportBackup}
+            disabled={isExporting}
+            className="flex items-center gap-2 px-4 py-2 text-xs font-semibold text-white bg-emerald-600 hover:bg-emerald-500 disabled:opacity-50 rounded-xl transition shadow-xs shrink-0 cursor-pointer"
+          >
+            {isExporting ? (
+              <Loader2 className="w-4 h-4 animate-spin" />
+            ) : (
+              <Download className="w-4 h-4" />
+            )}
+            Download JSON Backup
+          </button>
+        </div>
+      </div>
+
+      {/* 3. Notification Integrations */}
+      <div className="p-6 rounded-2xl bg-white dark:bg-zinc-900/80 border border-slate-200/90 dark:border-zinc-800 shadow-xs">
+        <h3 className="text-sm font-bold text-slate-900 dark:text-white flex items-center gap-2 mb-4">
+          <Bell className="w-4 h-4 text-emerald-600 dark:text-emerald-400" />
+          Alerts & Notification Channels
+        </h3>
+
+        <div className="space-y-4">
+          {/* Telegram Card */}
+          <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 p-4 rounded-xl bg-slate-50/80 dark:bg-zinc-950/60 border border-slate-200/80 dark:border-zinc-800">
+            <div className="flex items-start gap-3">
+              <div className="w-9 h-9 rounded-xl bg-sky-500/15 text-sky-600 dark:text-sky-400 flex items-center justify-center shrink-0 border border-sky-500/25">
+                <Send className="w-4 h-4" />
+              </div>
+              <div>
+                <div className="flex items-center gap-2">
+                  <h4 className="text-xs font-bold text-slate-900 dark:text-white">Telegram Bot Digest</h4>
+                  {stats.envStatus.telegramConfigured ? (
+                    <span className="px-2 py-0.5 rounded-full text-[10px] font-medium bg-emerald-500/10 text-emerald-700 dark:text-emerald-400 border border-emerald-500/20">
+                      Configured
+                    </span>
+                  ) : (
+                    <span className="px-2 py-0.5 rounded-full text-[10px] font-medium bg-amber-500/10 text-amber-700 dark:text-amber-400 border border-amber-500/20">
+                      Console Fallback (Set TELEGRAM_BOT_TOKEN)
+                    </span>
+                  )}
+                </div>
+                <p className="text-xs text-slate-500 dark:text-zinc-400 mt-1">
+                  Daily 08:00 morning digest of overdue tasks, due today, and devices with expiring warranties.
+                </p>
+              </div>
+            </div>
+
+            <button
+              onClick={handleTestNotification}
+              disabled={isNotifying}
+              className="flex items-center gap-2 px-3.5 py-1.5 text-xs font-medium text-slate-700 dark:text-zinc-300 bg-white dark:bg-zinc-800 hover:bg-slate-100 dark:hover:bg-zinc-700 disabled:opacity-50 rounded-xl border border-slate-200 dark:border-zinc-700 transition shadow-2xs shrink-0 cursor-pointer"
+            >
+              {isNotifying ? (
+                <Loader2 className="w-3.5 h-3.5 animate-spin" />
+              ) : (
+                <Send className="w-3.5 h-3.5" />
+              )}
+              Send Test Message
+            </button>
+          </div>
+
+          {notifyResult && (
+            <div
+              className={`p-3 rounded-xl text-xs flex items-center gap-2 ${
+                notifyResult.success
+                  ? "bg-emerald-500/10 text-emerald-700 dark:text-emerald-400 border border-emerald-500/20"
+                  : "bg-red-500/10 text-red-600 dark:text-red-400 border border-red-500/20"
+              }`}
+            >
+              {notifyResult.success ? (
+                <>
+                  <CheckCircle2 className="w-4 h-4 shrink-0" />
+                  <span>
+                    Test notification sent successfully!{" "}
+                    {!notifyResult.isConfigured &&
+                      "(Printed to server console because TELEGRAM_BOT_TOKEN is not configured in .env)"}
+                  </span>
+                </>
+              ) : (
+                <>
+                  <AlertTriangle className="w-4 h-4 shrink-0" />
+                  <span>Failed to send notification: {notifyResult.error}</span>
+                </>
+              )}
+            </div>
+          )}
+
+          {/* Cron Schedule Info */}
+          <div className="p-4 rounded-xl bg-slate-50/50 dark:bg-zinc-950/40 border border-slate-200/80 dark:border-zinc-800/80 flex items-start gap-3">
+            <Clock className="w-4 h-4 text-slate-400 dark:text-zinc-400 shrink-0 mt-0.5" />
+            <div className="text-xs text-slate-600 dark:text-zinc-400">
+              <span className="font-semibold text-slate-800 dark:text-zinc-200">Scheduled Vercel Cron Jobs:</span>
+              <ul className="mt-1 space-y-1 list-disc list-inside font-mono text-[11px] text-slate-500 dark:text-zinc-400">
+                <li>0 1 * * * (08:00 Asia/Bangkok) → Daily Reminder Digest</li>
+                <li>10 0 * * * (07:10 Asia/Bangkok) → Recurring Tasks Generator</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
 
       {/* 4. Software Stack Information */}
       <div className="p-6 rounded-2xl bg-white dark:bg-zinc-900/80 border border-slate-200/90 dark:border-zinc-800 shadow-xs">

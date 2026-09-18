@@ -17,3 +17,4 @@ UPDATE "users" SET "status" = 'APPROVED';
 
 -- 4. Ensure current admin retains ADMIN role
 UPDATE "users" SET "role" = 'ADMIN' WHERE "email" ILIKE '%@%' AND "status" = 'APPROVED';
+
