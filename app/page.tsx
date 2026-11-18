@@ -94,64 +94,62 @@ export default async function HomePage() {
   const siteCount = Number(c.site_count || 0);
 
   return (
-    <div className="space-y-6 max-w-7xl mx-auto w-full p-2 sm:p-4 md:p-6">
-      {/* 1. Clean Hero Header */}
-      <div className="rounded-2xl border border-emerald-500/20 bg-gradient-to-br from-emerald-500/[0.06] via-teal-500/[0.02] to-white dark:from-emerald-950/35 dark:via-zinc-900/80 dark:to-zinc-950 p-6 sm:p-7 shadow-xs">
-        <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-5">
-          <div className="space-y-1.5">
-            <h1 className="text-2xl sm:text-3xl font-bold tracking-tight text-slate-900 dark:text-white">
-              ภาพรวมการทำงาน
-            </h1>
-            <p className="text-sm sm:text-base text-slate-600 dark:text-zinc-400">
-              ติดตามงานที่ต้องทำ บันทึกกิจกรรมรายวันในปฏิทิน และค้นหาวิธีแก้ปัญหาได้ง่ายๆ
-            </p>
-          </div>
+    <div className="space-y-8 max-w-7xl mx-auto w-full p-2 sm:p-4 md:p-6">
+      {/* 1. Seamless Minimal Header */}
+      <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-5 px-1">
+        <div className="space-y-1.5">
+          <h1 className="text-2xl sm:text-3xl font-bold tracking-tight text-[#1E293B] dark:text-white">
+            ภาพรวมการทำงาน
+          </h1>
+          <p className="text-sm sm:text-base text-slate-500 dark:text-zinc-400">
+            ติดตามงานที่ต้องทำ บันทึกกิจกรรมรายวันในปฏิทิน และค้นหาวิธีแก้ปัญหา
+          </p>
+        </div>
 
-          <div className="flex flex-wrap items-center gap-2.5 shrink-0">
-            <Link
-              href="/calendar"
-              className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 active:scale-95 text-white text-sm font-semibold shadow-sm transition-all"
-            >
-              <Calendar className="w-4 h-4" />
-              <span>เปิดปฏิทินบันทึกงาน</span>
-            </Link>
-            <Link
-              href="/tasks"
-              className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-white dark:bg-zinc-900 hover:bg-slate-50 dark:hover:bg-zinc-800 text-slate-700 dark:text-zinc-200 border border-slate-200 dark:border-zinc-800 text-sm font-semibold shadow-2xs transition-all"
-            >
-              <Plus className="w-4 h-4 text-emerald-600 dark:text-emerald-400" />
-              <span>รายการงาน</span>
-            </Link>
-            <Link
-              href="/cases/new"
-              className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-white dark:bg-zinc-900 hover:bg-slate-50 dark:hover:bg-zinc-800 text-slate-700 dark:text-zinc-200 border border-slate-200 dark:border-zinc-800 text-sm font-semibold shadow-2xs transition-all"
-            >
-              <BookOpenCheck className="w-4 h-4 text-blue-500" />
-              <span>บันทึกวิธีแก้ปัญหา</span>
-            </Link>
-          </div>
+        <div className="flex flex-wrap items-center gap-2.5 shrink-0">
+          <Link
+            href="/calendar"
+            className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-[#52796F] hover:bg-[#43665D] text-white text-sm font-medium shadow-[0_1px_2px_rgba(15,23,42,0.08)] transition-colors"
+          >
+            <Calendar className="w-4 h-4" />
+            <span>เปิดปฏิทินบันทึกงาน</span>
+          </Link>
+          <Link
+            href="/tasks"
+            className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-white dark:bg-zinc-900 hover:bg-slate-50 dark:hover:bg-zinc-800 text-[#1E293B] dark:text-zinc-200 border border-slate-200/70 dark:border-zinc-800 text-sm font-medium transition-colors"
+          >
+            <Plus className="w-4 h-4 text-[#52796F]" />
+            <span>รายการงาน</span>
+          </Link>
+          <Link
+            href="/cases/new"
+            className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-white dark:bg-zinc-900 hover:bg-slate-50 dark:hover:bg-zinc-800 text-[#1E293B] dark:text-zinc-200 border border-slate-200/70 dark:border-zinc-800 text-sm font-medium transition-colors"
+          >
+            <BookOpenCheck className="w-4 h-4 text-[#5B82B0]" />
+            <span>บันทึกวิธีแก้ปัญหา</span>
+          </Link>
         </div>
       </div>
 
-      {/* 2. Summary Cards */}
+      {/* 2. Minimal Summary Cards */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
         <Link
           href="/tasks"
-          className="p-5 rounded-2xl border border-slate-200/90 dark:border-zinc-800/80 bg-white dark:bg-zinc-900/70 hover:border-emerald-500/40 shadow-xs hover:shadow-md transition-all group flex flex-col justify-between"
+          className="p-5 sm:p-6 rounded-2xl border border-slate-200/60 dark:border-zinc-800/80 bg-white dark:bg-zinc-900/70 hover:border-slate-300/80 transition-colors flex flex-col justify-between shadow-[0_1px_2px_rgba(15,23,42,0.02)]"
         >
           <div className="flex items-center justify-between mb-3">
-            <span className="text-sm font-semibold text-slate-600 dark:text-zinc-400">งานที่ค้างอยู่</span>
-            <div className="p-2 rounded-xl bg-emerald-50 dark:bg-emerald-500/10 text-emerald-600 dark:text-emerald-400">
+            <span className="text-sm font-medium text-slate-500 dark:text-zinc-400">งานที่ค้างอยู่</span>
+            <div className="p-2 rounded-xl bg-[#EAF2EF] dark:bg-[#52796F]/20 text-[#52796F] dark:text-[#A3C4B8]">
               <CheckSquare className="h-5 w-5" />
             </div>
           </div>
           <div>
-            <div className="text-3xl sm:text-4xl font-bold text-slate-900 dark:text-white">{activeTaskCount}</div>
+            <div className="text-3xl sm:text-4xl font-bold text-[#1E293B] dark:text-white">{activeTaskCount}</div>
             <p className="text-sm mt-1.5">
               {overdueTaskCount > 0 ? (
-                <span className="text-red-600 dark:text-red-400 font-medium">เลยกำหนด {overdueTaskCount} งาน</span>
+                <span className="text-[#9E4747] dark:text-rose-400 font-medium">เลยกำหนด {overdueTaskCount} งาน</span>
               ) : (
-                <span className="text-emerald-600 dark:text-emerald-400 font-medium">ทุกงานตรงตามกำหนด</span>
+                <span className="text-[#52796F] dark:text-[#A3C4B8] font-medium">ทุกงานตรงตามกำหนด</span>
               )}
             </p>
           </div>
@@ -159,16 +157,16 @@ export default async function HomePage() {
 
         <Link
           href="/tasks?priority=P1"
-          className="p-5 rounded-2xl border border-slate-200/90 dark:border-zinc-800/80 bg-white dark:bg-zinc-900/70 hover:border-rose-500/40 shadow-xs hover:shadow-md transition-all group flex flex-col justify-between"
+          className="p-5 sm:p-6 rounded-2xl border border-slate-200/60 dark:border-zinc-800/80 bg-white dark:bg-zinc-900/70 hover:border-slate-300/80 transition-colors flex flex-col justify-between shadow-[0_1px_2px_rgba(15,23,42,0.02)]"
         >
           <div className="flex items-center justify-between mb-3">
-            <span className="text-sm font-semibold text-slate-600 dark:text-zinc-400">งานด่วนมาก (P1)</span>
-            <div className={`p-2 rounded-xl ${p1TaskCount > 0 ? "bg-rose-50 dark:bg-rose-500/15 text-rose-600" : "bg-slate-100 dark:bg-zinc-800 text-slate-400"}`}>
+            <span className="text-sm font-medium text-slate-500 dark:text-zinc-400">งานด่วนมาก (P1)</span>
+            <div className={`p-2 rounded-xl ${p1TaskCount > 0 ? "bg-[#FCECEC] text-[#9E4747]" : "bg-slate-100 dark:bg-zinc-800 text-slate-400"}`}>
               <Flame className="h-5 w-5" />
             </div>
           </div>
           <div>
-            <div className={`text-3xl sm:text-4xl font-bold ${p1TaskCount > 0 ? "text-rose-600 dark:text-rose-400" : "text-slate-900 dark:text-white"}`}>
+            <div className={`text-3xl sm:text-4xl font-bold ${p1TaskCount > 0 ? "text-[#9E4747] dark:text-rose-400" : "text-[#1E293B] dark:text-white"}`}>
               {p1TaskCount}
             </div>
             <p className="text-sm text-slate-500 dark:text-zinc-400 mt-1.5">
@@ -178,34 +176,34 @@ export default async function HomePage() {
         </Link>
 
         <Link
-          href="/cases"
-          className="p-5 rounded-2xl border border-slate-200/90 dark:border-zinc-800/80 bg-white dark:bg-zinc-900/70 hover:border-blue-500/40 shadow-xs hover:shadow-md transition-all group flex flex-col justify-between"
+          href="/calendar"
+          className="p-5 sm:p-6 rounded-2xl border border-slate-200/60 dark:border-zinc-800/80 bg-white dark:bg-zinc-900/70 hover:border-slate-300/80 transition-colors flex flex-col justify-between shadow-[0_1px_2px_rgba(15,23,42,0.02)]"
         >
           <div className="flex items-center justify-between mb-3">
-            <span className="text-sm font-semibold text-slate-600 dark:text-zinc-400">คลังแก้ปัญหา</span>
-            <div className="p-2 rounded-xl bg-blue-50 dark:bg-blue-500/10 text-blue-600 dark:text-blue-400">
-              <BookOpenCheck className="h-5 w-5" />
+            <span className="text-sm font-medium text-slate-500 dark:text-zinc-400">ปฏิทินงาน</span>
+            <div className="p-2 rounded-xl bg-[#EBF2FA] dark:bg-blue-500/15 text-[#5B82B0] dark:text-blue-300">
+              <Calendar className="h-5 w-5" />
             </div>
           </div>
           <div>
-            <div className="text-3xl sm:text-4xl font-bold text-slate-900 dark:text-white">{caseCount}</div>
-            <p className="text-sm text-slate-500 dark:text-zinc-400 mt-1.5">เคสที่บันทึกไว้</p>
+            <div className="text-xl sm:text-2xl font-bold text-[#1E293B] dark:text-white mt-1">บันทึกประจำวัน</div>
+            <p className="text-sm text-slate-500 dark:text-zinc-400 mt-2">กดเลือกวันที่เพื่อเพิ่มงาน</p>
           </div>
         </Link>
 
         <Link
-          href="/devices"
-          className="p-5 rounded-2xl border border-slate-200/90 dark:border-zinc-800/80 bg-white dark:bg-zinc-900/70 hover:border-violet-500/40 shadow-xs hover:shadow-md transition-all group flex flex-col justify-between"
+          href="/cases"
+          className="p-5 sm:p-6 rounded-2xl border border-slate-200/60 dark:border-zinc-800/80 bg-white dark:bg-zinc-900/70 hover:border-slate-300/80 transition-colors flex flex-col justify-between shadow-[0_1px_2px_rgba(15,23,42,0.02)]"
         >
           <div className="flex items-center justify-between mb-3">
-            <span className="text-sm font-semibold text-slate-600 dark:text-zinc-400">อุปกรณ์ & สถานที่</span>
-            <div className="p-2 rounded-xl bg-violet-50 dark:bg-violet-500/10 text-violet-600 dark:text-violet-400">
-              <Server className="h-5 w-5" />
+            <span className="text-sm font-medium text-slate-500 dark:text-zinc-400">คลังแก้ปัญหา</span>
+            <div className="p-2 rounded-xl bg-[#F2EFFB] dark:bg-purple-500/15 text-[#8370B5] dark:text-purple-300">
+              <BookOpenCheck className="h-5 w-5" />
             </div>
           </div>
           <div>
-            <div className="text-3xl sm:text-4xl font-bold text-slate-900 dark:text-white">{deviceCount}</div>
-            <p className="text-sm text-slate-500 dark:text-zinc-400 mt-1.5">ทั้งหมด {siteCount} สถานที่</p>
+            <div className="text-3xl sm:text-4xl font-bold text-[#1E293B] dark:text-white">{caseCount}</div>
+            <p className="text-sm text-slate-500 dark:text-zinc-400 mt-1.5">เคสที่บันทึกไว้</p>
           </div>
         </Link>
       </div>
@@ -213,17 +211,17 @@ export default async function HomePage() {
       {/* 3. Main Content: Urgent Tasks & Recent Cases */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* Urgent & Overdue Tasks */}
-        <div className="lg:col-span-2 rounded-2xl border border-slate-200/90 dark:border-zinc-800 bg-white dark:bg-zinc-900/70 p-5 sm:p-6 shadow-xs">
-          <div className="flex items-center justify-between mb-4">
+        <div className="lg:col-span-2 rounded-2xl border border-slate-200/60 dark:border-zinc-800 bg-white dark:bg-zinc-900/70 p-6 shadow-[0_1px_2px_rgba(15,23,42,0.02)]">
+          <div className="flex items-center justify-between mb-5">
             <div className="flex items-center gap-2.5">
-              <AlertTriangle className="w-5 h-5 text-amber-500" />
-              <h2 className="text-base sm:text-lg font-bold text-slate-900 dark:text-white">
+              <AlertTriangle className="w-5 h-5 text-[#C28848]" />
+              <h2 className="text-base sm:text-lg font-bold text-[#1E293B] dark:text-white">
                 งานด่วนและงานที่ต้องติดตาม
               </h2>
             </div>
             <Link
               href="/tasks"
-              className="text-sm text-emerald-600 dark:text-emerald-400 hover:underline font-semibold flex items-center gap-1"
+              className="text-sm text-[#52796F] dark:text-[#A3C4B8] hover:underline font-medium flex items-center gap-1"
             >
               ดูทั้งหมด <ArrowRight className="w-4 h-4" />
             </Link>
@@ -231,11 +229,11 @@ export default async function HomePage() {
 
           {urgentTasks.length === 0 ? (
             <div className="py-10 text-center text-slate-500 dark:text-zinc-400 flex flex-col items-center gap-3">
-              <div className="w-12 h-12 rounded-2xl bg-emerald-50 dark:bg-emerald-500/10 flex items-center justify-center text-emerald-600 dark:text-emerald-400">
+              <div className="w-12 h-12 rounded-2xl bg-[#EAF2EF] dark:bg-[#52796F]/20 flex items-center justify-center text-[#52796F] dark:text-[#A3C4B8]">
                 <CheckCircle2 className="w-6 h-6" />
               </div>
               <div className="space-y-1">
-                <p className="text-base font-semibold text-slate-800 dark:text-zinc-200">ไม่มีงานด่วนหรือเลยกำหนด</p>
+                <p className="text-base font-semibold text-[#1E293B] dark:text-zinc-200">ไม่มีงานด่วนหรือเลยกำหนด</p>
                 <p className="text-sm text-slate-500 dark:text-zinc-400">ทุกอย่างเรียบร้อยดี</p>
               </div>
             </div>
@@ -246,22 +244,22 @@ export default async function HomePage() {
                 return (
                   <div
                     key={t.id}
-                    className="py-3.5 flex items-start justify-between gap-3 hover:bg-slate-50 dark:hover:bg-zinc-800/30 px-2 rounded-xl transition-colors"
+                    className="py-3.5 flex items-start justify-between gap-3 hover:bg-[#F8FAFC] dark:hover:bg-zinc-800/30 px-2.5 rounded-xl transition-colors"
                   >
                     <div className="space-y-1 min-w-0">
                       <div className="flex items-center gap-2 flex-wrap">
                         <span
-                          className={`px-2 py-0.5 rounded-md text-xs font-bold ${
+                          className={`px-2.5 py-0.5 rounded-full text-xs font-semibold ${
                             t.priority === "P1"
-                              ? "bg-red-500/15 text-red-600 dark:text-red-400"
-                              : "bg-orange-500/15 text-orange-600 dark:text-orange-400"
+                              ? "bg-[#FCECEC] text-[#7F2929]"
+                              : "bg-[#FDF3E7] text-[#664219]"
                           }`}
                         >
                           {t.priority}
                         </span>
                         <Link
                           href={`/tasks/${t.id}`}
-                          className="text-sm sm:text-base font-semibold text-slate-900 dark:text-white hover:text-emerald-600 dark:hover:text-emerald-400 transition-colors"
+                          className="text-sm sm:text-base font-semibold text-[#1E293B] dark:text-white hover:text-[#52796F] dark:hover:text-[#A3C4B8] transition-colors"
                         >
                           {t.title}
                         </Link>
@@ -270,7 +268,7 @@ export default async function HomePage() {
                         {t.site && <span>{t.site.name}</span>}
                         {t.device && <span>[{t.device.hostname}]</span>}
                         {isOverdue && (
-                          <span className="text-red-600 dark:text-red-400 font-medium flex items-center gap-1">
+                          <span className="text-[#9E4747] dark:text-rose-400 font-medium flex items-center gap-1">
                             <Clock className="w-3.5 h-3.5" />
                             เลยกำหนด
                           </span>
@@ -278,7 +276,7 @@ export default async function HomePage() {
                       </div>
                     </div>
 
-                    <span className="text-xs px-2.5 py-1 rounded-lg bg-slate-100 dark:bg-zinc-800 text-slate-700 dark:text-zinc-300 font-medium shrink-0">
+                    <span className="text-xs px-3 py-1 rounded-full bg-slate-100 dark:bg-zinc-800 text-slate-600 dark:text-zinc-300 font-medium shrink-0">
                       {t.status === "TODO" ? "รอดำเนินการ" : t.status === "IN_PROGRESS" ? "กำลังทำ" : t.status}
                     </span>
                   </div>
@@ -288,17 +286,17 @@ export default async function HomePage() {
           )}
         </div>
 
-        {/* Recent Cases & Warranties */}
+        {/* Recent Cases */}
         <div className="space-y-6">
-          <div className="rounded-2xl border border-slate-200/90 dark:border-zinc-800 bg-white dark:bg-zinc-900/70 p-5 sm:p-6 shadow-xs">
+          <div className="rounded-2xl border border-slate-200/60 dark:border-zinc-800 bg-white dark:bg-zinc-900/70 p-6 shadow-[0_1px_2px_rgba(15,23,42,0.02)]">
             <div className="flex items-center justify-between mb-4">
               <div className="flex items-center gap-2">
-                <BookOpenCheck className="w-5 h-5 text-blue-500" />
-                <h2 className="text-base sm:text-lg font-bold text-slate-900 dark:text-white">วิธีแก้ปัญหาล่าสุด</h2>
+                <BookOpenCheck className="w-5 h-5 text-[#5B82B0]" />
+                <h2 className="text-base sm:text-lg font-bold text-[#1E293B] dark:text-white">วิธีแก้ปัญหาล่าสุด</h2>
               </div>
               <Link
                 href="/cases"
-                className="text-sm text-blue-600 dark:text-blue-400 hover:underline font-semibold flex items-center gap-1"
+                className="text-sm text-[#5B82B0] dark:text-blue-300 hover:underline font-medium flex items-center gap-1"
               >
                 ทั้งหมด <ArrowRight className="w-4 h-4" />
               </Link>
@@ -309,7 +307,7 @@ export default async function HomePage() {
                 <p>ยังไม่มีข้อมูลวิธีแก้ปัญหา</p>
                 <Link
                   href="/cases/new"
-                  className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-blue-50 dark:bg-blue-500/10 text-blue-600 dark:text-blue-400 font-medium text-sm hover:bg-blue-100 transition"
+                  className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-[#EBF2FA] text-[#24476E] font-medium text-sm hover:opacity-90 transition"
                 >
                   <Plus className="w-4 h-4" /> บันทึกเคสแรก
                 </Link>
@@ -320,17 +318,17 @@ export default async function HomePage() {
                   <Link
                     key={c.id}
                     href={`/cases/${c.id}`}
-                    className="block p-3.5 rounded-xl bg-slate-50/80 dark:bg-zinc-950/60 border border-slate-200/80 dark:border-zinc-800/80 hover:border-slate-300 dark:hover:border-zinc-700 transition"
+                    className="block p-3.5 rounded-xl bg-[#F8FAFC] dark:bg-zinc-950/60 hover:bg-slate-100/80 dark:hover:bg-zinc-900 transition-colors"
                   >
                     <div className="flex items-center justify-between text-xs mb-1">
                       <span className="text-slate-500 dark:text-zinc-400">{c.caseNumber}</span>
-                      <span className="px-2 py-0.5 rounded-md bg-slate-200/80 dark:bg-zinc-800 text-slate-700 dark:text-zinc-300 font-medium">
+                      <span className="px-2.5 py-0.5 rounded-full bg-white dark:bg-zinc-800 text-slate-600 dark:text-zinc-300 font-medium">
                         {c.category}
                       </span>
                     </div>
-                    <h4 className="text-sm font-semibold text-slate-900 dark:text-white truncate">{c.title}</h4>
+                    <h4 className="text-sm font-semibold text-[#1E293B] dark:text-white truncate">{c.title}</h4>
                     {c.cause && (
-                      <p className="text-xs text-slate-600 dark:text-zinc-400 truncate mt-1">
+                      <p className="text-xs text-slate-500 dark:text-zinc-400 truncate mt-1">
                         สาเหตุ: {c.cause}
                       </p>
                     )}
@@ -339,30 +337,6 @@ export default async function HomePage() {
               </div>
             )}
           </div>
-
-          {expiringDevices.length > 0 && (
-            <div className="rounded-2xl border border-slate-200/90 dark:border-zinc-800 bg-white dark:bg-zinc-900/70 p-5 shadow-xs">
-              <div className="flex items-center gap-2 mb-3">
-                <ShieldAlert className="w-5 h-5 text-amber-500" />
-                <h3 className="text-sm sm:text-base font-bold text-slate-900 dark:text-white">
-                  อุปกรณ์ใกล้หมดประกัน (30 วัน)
-                </h3>
-              </div>
-              <div className="space-y-2 text-sm">
-                {expiringDevices.map((d) => (
-                  <div
-                    key={d.id}
-                    className="p-3 rounded-xl bg-amber-500/10 border border-amber-500/20 text-amber-800 dark:text-amber-300 flex items-center justify-between font-medium"
-                  >
-                    <span>{d.hostname}</span>
-                    <span className="text-xs">
-                      {d.warrantyEnd ? new Date(d.warrantyEnd).toLocaleDateString("th-TH") : ""}
-                    </span>
-                  </div>
-                ))}
-              </div>
-            </div>
-          )}
         </div>
       </div>
     </div>

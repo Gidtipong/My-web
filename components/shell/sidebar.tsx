@@ -8,11 +8,8 @@ import {
   CheckSquare,
   CalendarDays,
   BookOpenCheck,
-  Server,
-  Building2,
   BarChart3,
   Settings,
-  Activity,
   Terminal,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
@@ -20,52 +17,28 @@ import { cn } from "@/lib/utils";
 export const navItems = [
   {
     name: "หน้าหลัก",
-    key: "Tasks",
     href: "/",
     icon: LayoutDashboard,
-    shortcut: "1",
   },
   {
     name: "รายการงาน",
-    key: "Tasks",
     href: "/tasks",
     icon: CheckSquare,
-    shortcut: "2",
   },
   {
     name: "ปฏิทิน",
-    key: "Calendar",
     href: "/calendar",
     icon: CalendarDays,
-    shortcut: "3",
   },
   {
     name: "คลังแก้ปัญหา",
-    key: "Cases",
     href: "/cases",
     icon: BookOpenCheck,
-    shortcut: "4",
-  },
-  {
-    name: "อุปกรณ์",
-    key: "Devices",
-    href: "/devices",
-    icon: Server,
-    shortcut: "5",
-  },
-  {
-    name: "สถานที่",
-    key: "Sites",
-    href: "/sites",
-    icon: Building2,
-    shortcut: "6",
   },
   {
     name: "รายงาน",
-    key: "Reports",
     href: "/reports",
     icon: BarChart3,
-    shortcut: "7",
   },
 ];
 
@@ -112,11 +85,8 @@ export function Sidebar() {
   const getBadgeValue = (href: string) => {
     let count: number | undefined;
     if (href === "/tasks") count = counts.tasks;
-    else if (href === "/devices") count = counts.devices;
-    else if (href === "/sites") count = counts.sites;
     else if (href === "/cases") count = counts.cases;
 
-    // ถ้าไม่มีจำนวน หรือเป็น 0 ไม่ให้ใส่อะไรเลย
     if (typeof count === "number" && count > 0) {
       return String(count);
     }
@@ -124,19 +94,19 @@ export function Sidebar() {
   };
 
   return (
-    <aside className="hidden md:flex md:w-64 md:flex-col fixed inset-y-0 z-40 bg-white dark:bg-zinc-950 border-r border-slate-200/80 dark:border-zinc-800/80 text-slate-900 dark:text-zinc-100 transition-colors">
+    <aside className="hidden md:flex md:w-64 md:flex-col fixed inset-y-0 z-40 bg-white dark:bg-zinc-950 border-r border-slate-200/60 dark:border-zinc-800/70 text-[#1E293B] dark:text-zinc-100 transition-colors">
       {/* Brand Header */}
-      <div className="flex h-16 items-center px-5 border-b border-slate-200/80 dark:border-zinc-800/80">
+      <div className="flex h-16 items-center px-6">
         <Link href="/" className="flex items-center gap-3 font-semibold tracking-tight group">
-          <div className="h-9 w-9 rounded-xl bg-gradient-to-br from-emerald-500 to-teal-700 flex items-center justify-center text-white shadow-md shadow-emerald-500/20 group-hover:scale-105 transition-transform">
-            <Terminal className="h-5 w-5 text-white stroke-[2.5]" />
+          <div className="h-9 w-9 rounded-xl bg-[#52796F] flex items-center justify-center text-white transition-transform group-hover:scale-105">
+            <Terminal className="h-4 w-4 text-white stroke-[2.2]" />
           </div>
-          <span className="font-bold text-slate-900 dark:text-zinc-100 text-lg tracking-tight">NetTask</span>
+          <span className="font-bold text-[#1E293B] dark:text-zinc-100 text-lg tracking-tight">NetTask</span>
         </Link>
       </div>
 
       {/* Navigation List */}
-      <nav className="flex-1 px-3 py-4 space-y-1.5 overflow-y-auto">
+      <nav className="flex-1 px-4 py-3 space-y-1.5 overflow-y-auto">
         {navItems.map((item) => {
           const Icon = item.icon;
           const isActive = pathname === item.href || (item.href !== "/" && pathname.startsWith(item.href));
@@ -148,17 +118,19 @@ export function Sidebar() {
               href={item.href}
               prefetch={true}
               className={cn(
-                "group flex items-center justify-between px-3.5 py-2.5 text-[15px] font-medium rounded-xl transition-all duration-150",
+                "group flex items-center justify-between px-3.5 py-2.5 text-[15px] rounded-xl transition-colors duration-150",
                 isActive
-                  ? "bg-emerald-50/90 text-emerald-900 dark:bg-emerald-500/10 dark:text-emerald-400 shadow-2xs border border-emerald-200/90 dark:border-emerald-500/25 font-semibold"
-                  : "text-slate-700 dark:text-zinc-300 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100/70 dark:hover:bg-zinc-900/80"
+                  ? "bg-[#EAF2EF] text-[#2F5249] dark:bg-[#52796F]/20 dark:text-[#A3C4B8] font-semibold"
+                  : "text-slate-600 dark:text-zinc-400 hover:text-[#1E293B] dark:hover:text-white hover:bg-slate-100/70 dark:hover:bg-zinc-900/70 font-medium"
               )}
             >
               <div className="flex items-center gap-3">
                 <Icon
                   className={cn(
-                    "h-5 w-5 transition-colors",
-                    isActive ? "text-emerald-600 dark:text-emerald-400" : "text-slate-400 dark:text-zinc-400 group-hover:text-slate-700 dark:group-hover:text-zinc-200"
+                    "h-[18px] w-[18px] transition-colors",
+                    isActive
+                      ? "text-[#52796F] dark:text-[#A3C4B8]"
+                      : "text-slate-400 dark:text-zinc-500 group-hover:text-slate-600 dark:group-hover:text-zinc-300"
                   )}
                 />
                 <span>{item.name}</span>
@@ -166,10 +138,10 @@ export function Sidebar() {
               {badgeText && (
                 <span
                   className={cn(
-                    "text-xs font-semibold px-2 py-0.5 rounded-full transition-colors ml-auto",
+                    "text-xs font-medium px-2 py-0.5 rounded-full transition-colors ml-auto",
                     isActive
-                      ? "bg-emerald-100 text-emerald-700 dark:bg-emerald-500/20 dark:text-emerald-300"
-                      : "bg-slate-100 text-slate-600 dark:bg-zinc-800 dark:text-zinc-400"
+                      ? "bg-white/80 text-[#2F5249] dark:bg-zinc-900/60 dark:text-[#A3C4B8]"
+                      : "bg-slate-100 text-slate-500 dark:bg-zinc-800 dark:text-zinc-400"
                   )}
                 >
                   {badgeText}
@@ -181,17 +153,24 @@ export function Sidebar() {
       </nav>
 
       {/* Settings at the bottom */}
-      <div className="p-3 border-t border-slate-200/80 dark:border-zinc-800/80">
+      <div className="p-4 border-t border-slate-200/60 dark:border-zinc-800/70">
         <Link
           href="/settings"
           className={cn(
-            "group flex items-center gap-3 px-3.5 py-2.5 text-[15px] font-medium rounded-xl transition-all duration-150",
+            "group flex items-center gap-3 px-3.5 py-2.5 text-[15px] rounded-xl transition-colors duration-150",
             pathname === "/settings"
-              ? "bg-slate-100 text-slate-900 dark:bg-zinc-800 dark:text-white border border-slate-200/90 dark:border-zinc-700/60 font-semibold"
-              : "text-slate-700 dark:text-zinc-300 hover:text-slate-900 dark:hover:text-white hover:bg-slate-50 dark:hover:bg-zinc-900/80"
+              ? "bg-[#EAF2EF] text-[#2F5249] dark:bg-[#52796F]/20 dark:text-[#A3C4B8] font-semibold"
+              : "text-slate-600 dark:text-zinc-400 hover:text-[#1E293B] dark:hover:text-white hover:bg-slate-100/70 dark:hover:bg-zinc-900/70 font-medium"
           )}
         >
-          <Settings className="h-5 w-5 text-slate-400 dark:text-zinc-400 group-hover:text-slate-700 dark:group-hover:text-zinc-200 transition-colors" />
+          <Settings
+            className={cn(
+              "h-[18px] w-[18px] transition-colors",
+              pathname === "/settings"
+                ? "text-[#52796F] dark:text-[#A3C4B8]"
+                : "text-slate-400 dark:text-zinc-500 group-hover:text-slate-600 dark:group-hover:text-zinc-300"
+            )}
+          />
           <span>ตั้งค่า</span>
         </Link>
       </div>

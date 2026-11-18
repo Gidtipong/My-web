@@ -13,9 +13,9 @@ export function Fab({ onClick }: FabProps) {
       type="button"
       onClick={onClick}
       aria-label="เพิ่มงานใหม่"
-      className="hidden md:flex fixed bottom-8 right-8 z-40 items-center gap-2 rounded-full bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 active:scale-95 text-white font-semibold px-5 py-3 shadow-lg shadow-emerald-600/20 hover:shadow-xl hover:shadow-emerald-500/30 transition-all duration-200 border border-emerald-400/30 cursor-pointer group"
+      className="hidden md:flex fixed bottom-8 right-8 z-40 items-center gap-2 rounded-full bg-[#52796F] hover:bg-[#43665D] active:scale-[0.98] text-white font-semibold px-5 py-3 shadow-[0_4px_14px_rgba(15,23,42,0.12)] transition-all duration-150 cursor-pointer group"
     >
-      <Plus className="h-5 w-5 stroke-[2.5] group-hover:rotate-90 transition-transform duration-200" />
+      <Plus className="h-4 w-4 stroke-[2.5] group-hover:rotate-90 transition-transform duration-200" />
       <span className="text-sm">เพิ่มงานใหม่</span>
     </button>
   );

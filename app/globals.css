@@ -106,14 +106,18 @@ html.light {
 
 html.light body {
   background-color: #f8fafc !important;
-  color: #0f172a !important;
+  color: #1e293b !important;
 }
 
 html.light aside,
-html.light header,
 html.light nav {
   background-color: #ffffff !important;
-  border-color: #e2e8f0 !important;
+  border-color: rgba(226, 232, 240, 0.7) !important;
+}
+
+html.light header {
+  background-color: rgba(248, 250, 252, 0.85) !important;
+  border-color: rgba(226, 232, 240, 0.7) !important;
 }
 
 html.light .bg-zinc-950 {
@@ -163,9 +167,8 @@ html.light .divide-zinc-800 > * + * {
   border-color: #e2e8f0 !important;
 }
 
-html.light .text-white,
 html.light .text-zinc-100 {
-  color: #0f172a !important;
+  color: #1e293b !important;
 }
 
 html.light .text-zinc-200,
@@ -221,44 +224,43 @@ html.light .from-zinc-900 {
 
 /* FullCalendar Light Theme Variables & Styles */
 html.light .fc {
-  --fc-border-color: #e2e8f0;
+  --fc-border-color: rgba(226, 232, 240, 0.7);
   --fc-page-bg-color: #ffffff;
   --fc-neutral-bg-color: #f8fafc;
   --fc-list-event-hover-bg-color: #f1f5f9;
-  --fc-today-bg-color: rgba(16, 185, 129, 0.08);
+  --fc-today-bg-color: rgba(82, 121, 111, 0.06);
   font-family: inherit;
-  color: #0f172a;
+  color: #1e293b;
 }
 html.light .fc .fc-toolbar-title {
-  color: #0f172a !important;
+  color: #1e293b !important;
 }
 html.light .fc .fc-button-primary {
-  background-color: #ffffff !important;
-  border-color: #cbd5e1 !important;
-  color: #334155 !important;
+  background-color: #f1f5f9 !important;
+  border-color: transparent !important;
+  color: #475569 !important;
 }
 html.light .fc .fc-button-primary:hover {
-  background-color: #f1f5f9 !important;
-  border-color: #94a3b8 !important;
-  color: #0f172a !important;
+  background-color: #e2e8f0 !important;
+  color: #1e293b !important;
 }
 html.light .fc .fc-button-primary:not(:disabled).fc-button-active,
 html.light .fc .fc-button-primary:not(:disabled):active {
-  background-color: #10b981 !important;
-  border-color: #10b981 !important;
+  background-color: #52796f !important;
+  border-color: #52796f !important;
   color: #ffffff !important;
 }
 html.light .fc .fc-col-header-cell {
   background-color: #f8fafc !important;
 }
 html.light .fc .fc-col-header-cell-cushion {
-  color: #475569 !important;
+  color: #64748b !important;
 }
 html.light .fc .fc-daygrid-day-number {
   color: #334155 !important;
 }
 html.light .fc .fc-day-today .fc-daygrid-day-number {
-  color: #059669 !important;
+  color: #3a5a52 !important;
   font-weight: 700;
 }
 html.light .fc .fc-timegrid-slot-label-cushion {
