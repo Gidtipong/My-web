@@ -189,6 +189,7 @@ export async function createTask(rawData: any) {
     });
 
     revalidatePath("/tasks");
+    revalidatePath("/calendar");
     revalidatePath("/");
     return { success: true, data: task };
   } catch (error: any) {
@@ -232,6 +233,8 @@ export async function updateTask(id: string, rawData: any) {
     });
 
     revalidatePath("/tasks");
+    revalidatePath("/calendar");
+    revalidatePath("/");
     revalidatePath(`/tasks/${id}`);
     return { success: true, data: task };
   } catch (error: any) {
@@ -262,6 +265,8 @@ export async function updateTaskStatus(id: string, newStatus: TaskStatus) {
     });
 
     revalidatePath("/tasks");
+    revalidatePath("/calendar");
+    revalidatePath("/");
     revalidatePath(`/tasks/${id}`);
     return { success: true, data: task };
   } catch (error: any) {
@@ -288,6 +293,8 @@ export async function deleteTask(id: string) {
     });
 
     revalidatePath("/tasks");
+    revalidatePath("/calendar");
+    revalidatePath("/");
     return { success: true, data: task };
   } catch (error: any) {
     console.error("Error deleting task:", error);

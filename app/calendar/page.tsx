@@ -29,16 +29,7 @@ export default async function CalendarPage() {
   });
 
   return (
-    <div className="flex flex-col gap-6 p-4 md:p-8 max-w-7xl mx-auto w-full">
-      <div>
-        <h1 className="text-2xl font-bold tracking-tight text-zinc-900 dark:text-white flex items-center gap-2">
-          Maintenance & Task Calendar
-        </h1>
-        <p className="text-sm text-zinc-600 dark:text-zinc-400 mt-1">
-          Interactive schedule of tasks and scheduled maintenance windows. Drag tasks to reschedule.
-        </p>
-      </div>
-
+    <div className="flex flex-col gap-4 p-2 sm:p-4 md:p-6 max-w-7xl mx-auto w-full">
       <CalendarWrapper tasks={tasks} />
     </div>
   );
