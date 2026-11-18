@@ -125,9 +125,13 @@ export function Topbar({ onOpenCommandPalette }: TopbarProps) {
           <button
             type="button"
             onClick={async () => {
-              const { createClient } = await import("@/lib/supabase");
+              const [{ createClient }, { clearSessionMarker }] = await Promise.all([
+                import("@/lib/supabase"),
+                import("@/app/actions/auth-security"),
+              ]);
               const supabase = createClient();
               await supabase.auth.signOut();
+              await clearSessionMarker();
               window.location.href = "/login";
             }}
             title="ออกจากระบบ (Sign Out)"

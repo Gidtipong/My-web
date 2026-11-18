@@ -1,5 +1,9 @@
 import { NextResponse } from "next/server";
 import { createServerSupabaseClient } from "@/lib/supabase-server";
+import {
+  SESSION_STARTED_COOKIE,
+  getSessionMarkerCookieOptions,
+} from "@/lib/session";
 
 export async function GET(request: Request) {
   const { searchParams, origin } = new URL(request.url);
@@ -10,7 +14,13 @@ export async function GET(request: Request) {
     const supabase = await createServerSupabaseClient();
     const { error } = await supabase.auth.exchangeCodeForSession(code);
     if (!error) {
-      return NextResponse.redirect(`${origin}${next}`);
+      const response = NextResponse.redirect(`${origin}${next}`);
+      response.cookies.set(
+        SESSION_STARTED_COOKIE,
+        String(Date.now()),
+        getSessionMarkerCookieOptions()
+      );
+      return response;
     }
   }
 

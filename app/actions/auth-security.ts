@@ -1,11 +1,16 @@
 "use server";
 
+import { cookies } from "next/headers";
 import {
   checkAuthRateLimit,
   recordFailedAuthAttempt,
   resetAuthRateLimit,
   getClientIp,
 } from "@/lib/rate-limit";
+import {
+  SESSION_STARTED_COOKIE,
+  getSessionMarkerCookieOptions,
+} from "@/lib/session";
 
 // Official Cloudflare Turnstile test secret key (Always passes)
 const CLOUDFLARE_TEST_SECRET_KEY = "1x0000000000000000000000000000000AA";
@@ -92,3 +97,25 @@ export async function reportFailedLogin(): Promise<{
 export async function reportSuccessfulLogin(): Promise<void> {
   return resetAuthRateLimit();
 }
+
+/**
+ * Records the login timestamp in an httpOnly 7-day cookie so the session
+ * persists across browser restarts and expires after 1 week.
+ */
+export async function markSessionStarted(): Promise<void> {
+  const cookieStore = await cookies();
+  cookieStore.set(
+    SESSION_STARTED_COOKIE,
+    String(Date.now()),
+    getSessionMarkerCookieOptions()
+  );
+}
+
+/**
+ * Clears the 7-day session timestamp cookie on explicit sign out.
+ */
+export async function clearSessionMarker(): Promise<void> {
+  const cookieStore = await cookies();
+  cookieStore.delete(SESSION_STARTED_COOKIE);
+}
+

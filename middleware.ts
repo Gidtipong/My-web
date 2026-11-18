@@ -1,5 +1,11 @@
 import { NextResponse, type NextRequest } from "next/server";
 import { createServerClient } from "@supabase/ssr";
+import {
+  SESSION_STARTED_COOKIE,
+  SUPABASE_COOKIE_OPTIONS,
+  getSessionMarkerCookieOptions,
+  isSessionExpired,
+} from "@/lib/session";
 
 export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
@@ -28,6 +34,7 @@ export async function middleware(request: NextRequest) {
       process.env.NEXT_PUBLIC_SUPABASE_URL!,
       process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
       {
+        cookieOptions: SUPABASE_COOKIE_OPTIONS,
         cookies: {
           getAll() {
             return request.cookies.getAll();
@@ -54,7 +61,32 @@ export async function middleware(request: NextRequest) {
     if (!user) {
       const loginUrl = new URL("/login", request.url);
       loginUrl.searchParams.set("next", pathname);
-      return NextResponse.redirect(loginUrl);
+      const redirectResponse = NextResponse.redirect(loginUrl);
+      redirectResponse.cookies.delete(SESSION_STARTED_COOKIE);
+      return redirectResponse;
+    }
+
+    // Enforce 7-day (1 week) persistent session limit
+    const sessionStarted = request.cookies.get(SESSION_STARTED_COOKIE)?.value;
+    if (!sessionStarted) {
+      response.cookies.set(
+        SESSION_STARTED_COOKIE,
+        String(Date.now()),
+        getSessionMarkerCookieOptions()
+      );
+    } else if (isSessionExpired(sessionStarted)) {
+      await supabase.auth.signOut();
+      const loginUrl = new URL("/login", request.url);
+      loginUrl.searchParams.set("reason", "session_expired");
+      loginUrl.searchParams.set("next", pathname);
+      const redirectResponse = NextResponse.redirect(loginUrl);
+      redirectResponse.cookies.delete(SESSION_STARTED_COOKIE);
+      for (const cookie of request.cookies.getAll()) {
+        if (cookie.name.startsWith("sb-")) {
+          redirectResponse.cookies.delete(cookie.name);
+        }
+      }
+      return redirectResponse;
     }
   } catch (err) {
     console.error("Middleware auth check error:", err);

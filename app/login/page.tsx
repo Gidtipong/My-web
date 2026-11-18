@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { createClient } from "@/lib/supabase";
 import { checkUserApprovalStatus } from "@/app/actions/settings";
 import { Turnstile } from "@/components/ui/turnstile";
@@ -9,6 +9,8 @@ import {
   checkLoginRateLimit,
   reportFailedLogin,
   reportSuccessfulLogin,
+  markSessionStarted,
+  clearSessionMarker,
 } from "@/app/actions/auth-security";
 import {
   Terminal,
@@ -38,6 +40,16 @@ export default function LoginPage() {
   // Security: Cloudflare Turnstile & Rate Limiting state
   const [captchaToken, setCaptchaToken] = useState("");
   const [captchaResetKey, setCaptchaResetKey] = useState(0);
+
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    if (params.get("reason") === "session_expired") {
+      setMessage({
+        type: "error",
+        text: "เซสชันของคุณหมดอายุแล้ว (ครบกำหนด 1 สัปดาห์) กรุณาเข้าสู่ระบบใหม่อีกครั้ง",
+      });
+    }
+  }, []);
 
   // Switch between Sign In and Sign Up tabs
   const handleSwitchMode = (newMode: "signin" | "signup") => {
@@ -130,6 +142,7 @@ export default function LoginPage() {
 
         const approvalCheck = await checkUserApprovalStatus();
         if (approvalCheck?.status === "PENDING") {
+          await markSessionStarted();
           setMessage({
             type: "success",
             text: "เข้าสู่ระบบสำเร็จ! บัญชีของคุณอยู่ระหว่างรอการอนุมัติจาก Admin กำลังนำท่านไปที่หน้ารออนุมัติ...",
@@ -141,7 +154,9 @@ export default function LoginPage() {
             text: "บัญชีของคุณไม่ได้รับการอนุมัติการเข้าใช้งานจาก Admin กรุณาติดต่อผู้ดูแลระบบ",
           });
           await supabase.auth.signOut();
+          await clearSessionMarker();
         } else {
+          await markSessionStarted();
           setMessage({
             type: "success",
             text: "เข้าสู่ระบบสำเร็จ! กำลังนำท่านเข้าสู่หน้าคอนโซล...",
@@ -229,6 +244,7 @@ export default function LoginPage() {
           setMessage({ type: "error", text: error.message });
         }
       } else if (data?.session) {
+        await markSessionStarted();
         const approvalCheck = await checkUserApprovalStatus();
         if (approvalCheck?.status === "PENDING") {
           setMessage({

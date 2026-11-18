@@ -46,8 +46,12 @@ export default function PendingApprovalPage() {
   const handleSignOut = async () => {
     setIsSigningOut(true);
     try {
+      const [{ clearSessionMarker }] = await Promise.all([
+        import("@/app/actions/auth-security"),
+      ]);
       const supabase = createClient();
       await supabase.auth.signOut();
+      await clearSessionMarker();
       window.location.href = "/login";
     } catch (err) {
       console.error("Sign out error:", err);
